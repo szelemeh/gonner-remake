@@ -1,4 +1,3 @@
 # gonner_remake
 
-
-# testing
+Project for Python course
