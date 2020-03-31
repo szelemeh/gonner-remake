@@ -1,23 +1,42 @@
-# Gonner! - platform game remake
+# Gonner - platform game remake
 
 import pygame as pg
+import pymunk as pm
 import random
 from settings import *
+from sprites import *
+from pymunk import Vec2d
 
 
 class Game:
     def __init__(self):
         # initialize game window, etc
-        pg.init()
-        pg.mixer.init()
-        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
-        pg.display.set_caption(TITLE)
-        self.clock = pg.time.Clock()
         self.running = True
+        pg.display.set_caption(TITLE)
+        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
+        self.clock = pg.time.Clock()
+        pg.mixer.init()
+        pg.init()
+
+        # Pymunk stuff.
+        self.space = pm.Space()
+        self.space.gravity = Vec2d(0.0, -900.0)
 
     def new(self):
         # start a new game
+        self.space = pm.Space()
+        self.space.gravity = (0, -1000)
+
         self.all_sprites = pg.sprite.Group()
+        self.platforms = pg.sprite.Group()
+
+        self.player = Player(self, self.space)
+        self.all_sprites.add(self.player)
+
+        p1 = Platform(0, HEIGHT-40, WIDTH, 40, self.space)
+        self.all_sprites.add(p1)
+        self.platforms.add(p1)
+
         self.run()
 
     def run(self):
@@ -25,15 +44,16 @@ class Game:
         self.playing = True
         while self.playing:
             self.clock.tick(FPS)
-            self.events()
+            self.handle_events()
             self.update()
             self.draw()
 
     def update(self):
         # Game loop - Update
+        self.space.step(1/60)  # Update physics.
         self.all_sprites.update()
 
-    def events(self):
+    def handle_events(self):
         # Game loop - events
         for event in pg.event.get():
             # check for closing the window
@@ -41,7 +61,6 @@ class Game:
                 if self.playing:
                     self.playing = False
                 self.running = False
-
 
     def draw(self):
         # Game loop - draw
