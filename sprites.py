@@ -13,6 +13,13 @@ class Player(pg.sprite.Sprite):
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
 
+    def jump(self):
+        #self.rect.x += 1
+        #hits = pg.sprite.spritecollide(self, self.game.platforms, False)
+        #self.rect.x -= 1
+        #if hits:
+        self.vel.y = -5
+
     def update(self):
         self.acc = vec(0, 0.5)
         keys = pg.key.get_pressed()
@@ -20,6 +27,9 @@ class Player(pg.sprite.Sprite):
             self.acc.x = -PLAYER_ACC
         if keys[pg.K_RIGHT]:
             self.acc.x = PLAYER_ACC
+
+        if keys[pg.K_UP]:
+          self.jump()
 
         # apply friction
         self.acc.x += self.vel.x * PLAYER_FRICTION
