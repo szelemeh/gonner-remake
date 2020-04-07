@@ -18,7 +18,7 @@ class Player(pg.sprite.Sprite):
         #hits = pg.sprite.spritecollide(self, self.game.platforms, False)
         #self.rect.x -= 1
         #if hits:
-        self.vel.y = -5
+        self.vel.y = -10
 
     def update(self):
         self.acc = vec(0, 0.5)
@@ -53,6 +53,7 @@ class Tile(pg.sprite.Sprite):
     self.rect = self.image.get_rect()
     self.rect.x = x
     self.rect.y = y
+    self.size = size
 
 
 class Platform(pg.sprite.Sprite):
@@ -63,3 +64,5 @@ class Platform(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.width = w
+        self.height = h

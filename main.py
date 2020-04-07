@@ -43,15 +43,22 @@ class Game:
     def update(self):
         # Game Loop - Update
         self.all_sprites.update()
+        
         hits_platform = pg.sprite.spritecollide(self.player, self.platforms, False)
         if hits_platform:
-            self.player.pos.y = hits_platform[0].rect.top
-            self.player.vel.y = 0
+            if self.player.rect.top > hits_platform[0].rect.bottom - hits_platform[0].height / 2:
+                self.player.vel.y = 0
+            else:
+                self.player.pos.y = hits_platform[0].rect.top
+                self.player.vel.y = 0
 
         hits_tile = pg.sprite.spritecollide(self.player, self.tiles, False)
         if hits_tile:
-            self.player.pos.y = hits_tile[0].rect.top
-            self.player.vel.y = 0
+            if self.player.rect.top > hits_tile[0].rect.bottom - hits_tile[0].size / 2:
+                self.player.vel.y = 0
+            else:
+                self.player.pos.y = hits_tile[0].rect.top
+                self.player.vel.y = 0
 
     def events(self):
         # Game Loop - events
