@@ -6,7 +6,7 @@ FPS = 60
 TILE_SIZE = 32
 
 # Player properties
-PLAYER_ACC = 0.5
+PLAYER_ACCELERATION = 0.5
 PLAYER_FRICTION = -0.12
 
 # define colors

@@ -9,34 +9,34 @@ class Player(pg.sprite.Sprite):
         self.image.fill(LIGHTBLUE)
         self.rect = self.image.get_rect()
         self.rect.center = (WIDTH / 2, HEIGHT / 2)
-        self.pos = vec(WIDTH / 2, HEIGHT / 2)
-        self.vel = vec(0, 0)
-        self.acc = vec(0, 0)
+        self.position = vec(WIDTH / 2, HEIGHT / 2)
+        self.velocity = vec(0, 0)
+        self.acceleration = vec(0, 0)
 
     def jump(self):
-        self.vel.y = -15
+            self.velocity.y = -15
 
     def update(self):
-        self.acc = vec(0, 0.5)
+        self.acceleration = vec(0, 0.5)
 
         keys_pressed = pg.key.get_pressed()
         if keys_pressed[pg.K_LEFT]:
-            self.acc.x = -PLAYER_ACC
+            self.acceleration.x = -PLAYER_ACCELERATION
         if keys_pressed[pg.K_RIGHT]:
-            self.acc.x = PLAYER_ACC
+            self.acceleration.x = PLAYER_ACCELERATION
 
         # apply friction
-        self.acc.x += self.vel.x * PLAYER_FRICTION
+        self.acceleration.x += self.velocity.x * PLAYER_FRICTION
         # equations of motion
-        self.vel += self.acc
-        self.pos += self.vel + 0.5 * self.acc
+        self.velocity += self.acceleration
+        self.position += self.velocity + 0.5 * self.acceleration
         # wrap around the sides of the screen
-        if self.pos.x > WIDTH:
-            self.pos.x = 0
-        if self.pos.x < 0:
-            self.pos.x = WIDTH
+        if self.position.x > WIDTH:
+            self.position.x = 0
+        if self.position.x < 0:
+            self.position.x = WIDTH
 
-        self.rect.midbottom = self.pos
+        self.rect.midbottom = self.position
 
 
 class Tile(pg.sprite.Sprite):

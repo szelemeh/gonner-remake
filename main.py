@@ -3,7 +3,6 @@ import random
 from settings import *
 from sprites import *
 
-
 class Game:
     def __init__(self):
         # initialize game window, etc
@@ -13,16 +12,16 @@ class Game:
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         self.running = True
+        self.can_jump = False
+
 
     def create_wall(self, x, y, n):
-
-        # tile
-
         for i in range(n):
             for j in range(n):
                 tile = Tile(x + i * TILE_SIZE, y + j * TILE_SIZE)
                 self.all_sprites.add(tile)
                 self.tiles.add(tile)
+
 
     def new(self):
         # start a new game
@@ -58,18 +57,20 @@ class Game:
         hits_platform = pg.sprite.spritecollide(self.player, self.platforms, False)
         if hits_platform:
             if self.player.rect.top > hits_platform[0].rect.bottom - hits_platform[0].height / 2:
-                self.player.vel.y = 0
+                self.player.velocity.y = 0
             else:
-                self.player.pos.y = hits_platform[0].rect.top
-                self.player.vel.y = 0
+                self.player.position.y = hits_platform[0].rect.top
+                self.player.velocity.y = 0
+                self.can_jump = True
 
         hits_tile = pg.sprite.spritecollide(self.player, self.tiles, False)
         if hits_tile:
             if self.player.rect.top > hits_tile[0].rect.bottom - hits_tile[0].size / 2:
-                self.player.vel.y = 0
+                self.player.velocity.y = 0
             else:
-                self.player.pos.y = hits_tile[0].rect.top
-                self.player.vel.y = 0
+                self.player.position.y = hits_tile[0].rect.top
+                self.player.velocity.y = 0
+                self.can_jump = True
 
     def events(self):
         # Game Loop - events
@@ -80,9 +81,13 @@ class Game:
                     self.playing = False
                 self.running = False
 
+
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_UP:
-                    self.player.jump()
+                    if(self.can_jump):
+                        self.player.jump()
+                        self.can_jump = False
+
 
     def draw(self):
         # Game Loop - draw
@@ -98,7 +103,6 @@ class Game:
     def show_go_screen(self):
         # game over/continue
         pass
-
 
 g = Game()
 g.show_start_screen()
