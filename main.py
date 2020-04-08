@@ -13,20 +13,32 @@ class Game:
         self.clock = pg.time.Clock()
         self.running = True
 
+
+    def create_wall(self, x, y, n):
+
+        #tile
+
+        for i in range(n):
+            for j in range(n):
+                tile = Tile(x + i * TILE_SIZE, y + j * TILE_SIZE)
+                self.all_sprites.add(tile)
+                self.tiles.add(tile)
+
+
     def new(self):
         # start a new game
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
         self.tiles = pg.sprite.Group()
-        test_tile = Tile(WIDTH / 2, HEIGHT / 2, TILE_SIZE)
-        self.all_sprites.add(test_tile)
-        self.tiles.add(test_tile)
+        self.create_wall(WIDTH / 2, HEIGHT / 2, 2)
+        
         self.player = Player()
         self.all_sprites.add(self.player)
+        
         ground = Platform(0, HEIGHT - 32, WIDTH, 32)
         self.all_sprites.add(ground)
         self.platforms.add(ground)
-        p2 = Platform(WIDTH / 2 - 50, HEIGHT * 3 / 4, 100, 20)
+        p2 = Platform(WIDTH / 2 - 400, HEIGHT * 3 / 4, 200, 20)
         self.all_sprites.add(p2)
         self.platforms.add(p2)
         self.run()
@@ -76,7 +88,7 @@ class Game:
 
     def draw(self):
         # Game Loop - draw
-        self.screen.fill(BLACK)
+        self.screen.fill(RED)
         self.all_sprites.draw(self.screen)
         # *after* drawing everything, flip the display
         pg.display.flip()
