@@ -1,70 +1,92 @@
-# Gonner - platform game remake
-
 import pygame as pg
-import pymunk as pm
 import random
 from settings import *
 from sprites import *
-from pymunk import Vec2d
 
 
 class Game:
     def __init__(self):
         # initialize game window, etc
-        self.running = True
-        pg.display.set_caption(TITLE)
-        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
-        self.clock = pg.time.Clock()
-        pg.mixer.init()
         pg.init()
+        pg.mixer.init()
+        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
+        pg.display.set_caption(TITLE)
+        self.clock = pg.time.Clock()
+        self.running = True
 
-        # Pymunk stuff.
-        self.space = pm.Space()
-        self.space.gravity = Vec2d(0.0, -900.0)
+    def create_wall(self, x, y, n):
+
+        # tile
+
+        for i in range(n):
+            for j in range(n):
+                tile = Tile(x + i * TILE_SIZE, y + j * TILE_SIZE)
+                self.all_sprites.add(tile)
+                self.tiles.add(tile)
 
     def new(self):
         # start a new game
-        self.space = pm.Space()
-        self.space.gravity = (0, -1000)
-
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
+        self.tiles = pg.sprite.Group()
+        self.create_wall(WIDTH / 2, HEIGHT / 2, 2)
 
-        self.player = Player(self, self.space)
+        self.player = Player()
         self.all_sprites.add(self.player)
 
-        p1 = Platform(0, HEIGHT-40, WIDTH, 40, self.space)
-        self.all_sprites.add(p1)
-        self.platforms.add(p1)
-
+        ground = Platform(0, HEIGHT - 32, WIDTH, 32)
+        self.all_sprites.add(ground)
+        self.platforms.add(ground)
+        p2 = Platform(WIDTH / 2 - 400, HEIGHT * 3 / 4, 200, 20)
+        self.all_sprites.add(p2)
+        self.platforms.add(p2)
         self.run()
 
     def run(self):
-        # Game loop
+        # Game Loop
         self.playing = True
         while self.playing:
             self.clock.tick(FPS)
-            self.handle_events()
+            self.events()
             self.update()
             self.draw()
 
     def update(self):
-        # Game loop - Update
-        self.space.step(1/60)  # Update physics.
+        # Game Loop - Update
         self.all_sprites.update()
 
-    def handle_events(self):
-        # Game loop - events
+        hits_platform = pg.sprite.spritecollide(self.player, self.platforms, False)
+        if hits_platform:
+            if self.player.rect.top > hits_platform[0].rect.bottom - hits_platform[0].height / 2:
+                self.player.vel.y = 0
+            else:
+                self.player.pos.y = hits_platform[0].rect.top
+                self.player.vel.y = 0
+
+        hits_tile = pg.sprite.spritecollide(self.player, self.tiles, False)
+        if hits_tile:
+            if self.player.rect.top > hits_tile[0].rect.bottom - hits_tile[0].size / 2:
+                self.player.vel.y = 0
+            else:
+                self.player.pos.y = hits_tile[0].rect.top
+                self.player.vel.y = 0
+
+    def events(self):
+        # Game Loop - events
         for event in pg.event.get():
-            # check for closing the window
+            # check for closing window
             if event.type == pg.QUIT:
                 if self.playing:
                     self.playing = False
                 self.running = False
 
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_UP:
+                    self.player.jump()
+
     def draw(self):
-        # Game loop - draw
-        self.screen.fill(BLACK)
+        # Game Loop - draw
+        self.screen.fill(RED)
         self.all_sprites.draw(self.screen)
         # *after* drawing everything, flip the display
         pg.display.flip()

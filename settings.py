@@ -1,24 +1,20 @@
-# game options/settings
-import pymunk
-
-TITLE = "Gonner"
-WIDTH = 480
-HEIGHT = 600
+TITLE = "GoNNER"
+WIDTH = 1024
+HEIGHT = 576
 FPS = 60
-DT = 1. / FPS
+
+TILE_SIZE = 32
 
 # Player properties
-PLAYER_VELOCITY = 100. * 2.
-JUMP_HEIGHT = 100
-
-
-# Physics
-GROUND = HEIGHT/2
+PLAYER_ACC = 0.5
+PLAYER_FRICTION = -0.12
 
 # define colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-RED = (255, 0, 0)
-GREEN = (11, 102, 35)
+RED = (122, 23, 46)
+GREEN = (31, 122, 31)
 BLUE = (0, 0, 255)
-PLAYER_COLOR = (10, 168, 168)
+YELLOW = (255, 255, 0)
+LIGHTBLUE = (72, 132, 130)
+GREY = (50, 32, 36)
