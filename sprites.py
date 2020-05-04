@@ -40,7 +40,7 @@ class Player(pg.sprite.Sprite):
 
 
 class Tile(pg.sprite.Sprite):
-  def __init__(self, x, y, size = TILE_SIZE):
+  def __init__(self, x, y, size=TILE_SIZE):
     pg.sprite.Sprite.__init__(self)
     self.image = pg.Surface((size, size))
     self.image.fill(GREY)
