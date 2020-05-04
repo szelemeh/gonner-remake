@@ -9,6 +9,10 @@ TILE_SIZE = 32
 PLAYER_ACCELERATION = 0.5
 PLAYER_FRICTION = -0.12
 
+# Mob properties
+MOB_ACCELERATION = 1
+MOB_FRICTION = -0.2
+
 # define colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)

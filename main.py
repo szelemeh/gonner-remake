@@ -30,14 +30,18 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
         self.tiles = pg.sprite.Group()
+        self.mobs = pg.sprite.Group()
 
         # self.create_wall(WIDTH / 2, HEIGHT / 2, 2)
 
         self.player = Player()
+        self.enemy = Mob()
+        self.mobs.add(self.enemy)
+        self.all_sprites.add(self.enemy)
         self.all_sprites.add(self.player)
 
         # init camera
-        self.camera = Camera(self.platforms, self.player)
+        self.camera = Camera(self.platforms, self.mobs, self.player)
 
         ground = Platform(-WIDTH, HEIGHT * 3 / 4, WIDTH * 3, HEIGHT / 4)
         self.all_sprites.add(ground)
@@ -81,7 +85,15 @@ class Game:
                 self.player.velocity.y = 0
                 self.can_jump = True
 
-        # print(self.player.velocity.x)
+        mob_hits_platform = pg.sprite.spritecollide(self.enemy, self.platforms, False)
+        if mob_hits_platform:
+            self.enemy.position.y = mob_hits_platform[0].rect.top
+            self.enemy.velocity.y = 0
+
+        player_hits_mob = pg.sprite.spritecollide(self.player, self.mobs, False)
+        if player_hits_mob:
+            self.player.kill()
+
         self.camera.update()
 
     def events(self):
