@@ -1,6 +1,7 @@
 import pygame as pg
 from settings import *
 
+
 class Player(pg.sprite.Sprite):
 
     def __init__(self):
@@ -114,42 +115,3 @@ class Platform(pg.sprite.Sprite):
         self.rect.y = y
         self.width = w
         self.height = h
-
-
-class Mob(pg.sprite.Sprite):
-    def __init__(self):
-        pg.sprite.Sprite.__init__(self)
-        self.image = pg.Surface((20, 20))
-        self.image.fill(YELLOW)
-        self.rect = self.image.get_rect()
-        #self.position = vec(WIDTH * 3 / 4, HEIGHT / 2)
-        #self.velocity = vec(0, 0)
-        self.move_right = True
-        #self.acceleration = vec(0, 0)
-        self.count = 0
-
-    def update(self):
-        #self.acceleration = vec(0, 1)
-
-        if self.count == 200:
-            self.move_right = False
-        if self.count == 0:
-            self.move_right = True
-
-        if self.move_right:
-            self.count += 1
-        else:
-            self.count -= 1
-
-        #if self.move_right:
-            #self.acceleration.x = MOB_ACCELERATION
-        #else:
-            #self.acceleration.x = -MOB_ACCELERATION
-
-        # apply friction
-        #self.acceleration.x += self.velocity.x * MOB_FRICTION
-        # equations of motion
-        #self.velocity += self.acceleration
-        #self.position += self.velocity + 0.5 * self.acceleration
-
-        #self.rect.midbottom = self.position

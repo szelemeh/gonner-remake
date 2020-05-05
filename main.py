@@ -1,7 +1,10 @@
 
-import pygame
-from sprites import *
+import pygame as pg
+import random
+
 from settings import *
+from sprites import *
+from camera import *
 
 
 
@@ -24,7 +27,6 @@ class Game:
                 self.tiles_list.add(tile)
                 self.player.collide_list.add(tile)
 
-
     def new(self):
         # start a new game
         self.all_sprites = pg.sprite.Group()
@@ -38,11 +40,6 @@ class Game:
 
         self.player = Player()
         self.all_sprites.add(self.player)
-        self.enemy = Mob()
-        self.enemy_list.add(self.enemy)
-        self.all_sprites.add(self.enemy)
-        self.player.collide_list.add(self.enemy)
-
 
         #ceiling = Platform(0, 0, WIDTH * 10, 100)
         #self.platform_list.add(ceiling)
@@ -59,7 +56,6 @@ class Game:
         self.player.collide_list.add(p2)
         self.player.collide_list.add(p3)
         #self.player.collide_list.add(ceiling)
-
         self.run()
 
 
@@ -75,6 +71,8 @@ class Game:
         self.all_sprites.update()
         #self.player.update()
         #self.all_objects.update()
+
+        self.camera.update()
 
     def events(self):
         # Game Loop - events
@@ -112,8 +110,6 @@ class Game:
             diff = 120 - self.player.rect.left
             self.player.rect.left = 120
             self.shift_world(diff)
-        
-
 
     def draw(self):
  
@@ -225,7 +221,7 @@ while g.running:
     g.show_go_screen()
 
 pg.quit()
- 
+
 # def main():
 #     """ Main Program """
 #     #pygame.init()
