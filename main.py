@@ -3,6 +3,7 @@ import random
 
 from settings import *
 from sprites import *
+from enemies import *
 
 
 class Game:
@@ -38,6 +39,17 @@ class Game:
         self.player = Player()
         self.all_sprites.add(self.player)
 
+        self.worm = Worm(WIDTH / 3, HEIGHT / 2, 63, 23, self.player)
+        self.slime = Slime(WIDTH / 3, HEIGHT / 2, 63, 23, self.player)
+        self.ghost = Ghost(WIDTH / 3, HEIGHT / 2, 63, 23, self.player)
+
+        self.enemy_list.add(self.worm)
+        self.enemy_list.add(self.ghost)
+        self.enemy_list.add(self.slime)
+        self.all_sprites.add(self.worm)
+        self.all_sprites.add(self.slime)
+        self.all_sprites.add(self.ghost)
+
         # ceiling = Platform(0, 0, WIDTH * 10, 100)
         # self.platform_list.add(ceiling)
 
@@ -65,10 +77,7 @@ class Game:
 
     def update(self):
         self.all_sprites.update()
-        # self.player.update()
-        # self.all_objects.update()
-
-        # self.camera.update()
+        self.worm.update()
 
     def events(self):
         # Game Loop - events

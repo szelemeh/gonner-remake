@@ -1,5 +1,4 @@
 TITLE = "GoNNER"
-#WIDTH = 1024
 WIDTH = 1024
 HEIGHT = 576
 FPS = 60
@@ -7,12 +6,7 @@ FPS = 60
 TILE_SIZE = 32
 
 # Player properties
-PLAYER_ACCELERATION = 0.5
-PLAYER_FRICTION = -0.12
-
-# Mob properties
-MOB_ACCELERATION = 1
-MOB_FRICTION = -0.2
+PLAYER_SPEED = 6
 
 # define colors
 WHITE = (255, 255, 255)
