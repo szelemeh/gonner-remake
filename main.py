@@ -26,7 +26,6 @@ class Game:
                 self.player.collide_list.add(tile)
 
     def new(self):
-        # start a new game
         self.all_sprites = pg.sprite.Group()
         self.player_sprite = pg.sprite.Group()
         self.all_objects = pg.sprite.Group()
@@ -34,7 +33,6 @@ class Game:
         self.tiles_list = pg.sprite.Group()
         self.enemy_list = pg.sprite.Group()
 
-        # self.create_wall(WIDTH / 2, HEIGHT / 2, 2)
 
         self.player = Player()
         self.all_sprites.add(self.player)
@@ -68,16 +66,21 @@ class Game:
         self.player.collide_list.add(p3)
 
         self.create_wall(room[0][8][0], room[0][8][1] + TILE_SIZE * 2, 2)
+
+        for i in range(3):
+            random = randint(3*i, 3*i + 2)
+            n = randint(1, 4)
+            self.create_wall(room[1][random][0], room[1][random][1], n)
         
-        self.create_wall(room[1][1][2], room[1][1][3], 4)
-        self.create_wall(room[1][3][2], room[1][3][3], 2)
+        for i in range(3):
+            random = randint(3*i, 3*i + 2)
+            n = randint(1, 4)
+            self.create_wall(room[2][random][0], room[2][random][1], n)
 
-        self.create_wall(room[2][0][2], room[2][0][3], 4)
-        self.create_wall(room[2][0][2], room[2][0][3], 4)
-
-        self.create_wall(room[3][0][2], room[3][0][3], 3) 
-        self.create_wall(room[3][1][2], room[3][1][3], 1)
-        self.create_wall(room[3][7][2], room[3][7][3], 4)
+        for i in range(3):
+            random = randint(3*i, 3*i + 2)
+            n = randint(1, 4)
+            self.create_wall(room[3][random][0], room[3][random][1], n)
 
         self.run()
 
@@ -127,14 +130,13 @@ class Game:
         self.all_sprites.update()
 
         if self.player.rect.right >= 500:
-            diff = self.player.rect.right - 500
+            diff = self.player.rect.right - 500 # shift the world left
             self.player.rect.right = 500
             self.shift_world(-diff)
 
-        # If the player gets near the left side, shift the world right (+x)
-        if self.player.rect.left <= 120:
-            diff = 120 - self.player.rect.left
-            self.player.rect.left = 120
+        if self.player.rect.left <= 500:
+            diff = 500 - self.player.rect.left # shift the world right
+            self.player.rect.left = 500
             self.shift_world(diff)
 
 
@@ -147,29 +149,20 @@ class Game:
     
     def draw(self):
 
-        # Draw the background
         self.screen.fill(RED)
 
-        # Draw all the sprite lists that we have
-        # self.player_sprite.draw(self.screen)
-        # self.all_objects.draw(self.screen)
         self.all_sprites.draw(self.screen)
         pg.display.flip()
 
     def show_start_screen(self):
-        pass  # here there will be game start screen
+        pass  # here will be game start screen
 
     def show_go_screen(self):
-        pass  # here there will be end game screen
+        pass  # here will be end game screen
 
     def shift_world(self, shift_x):
-        """ When the user moves left/right and we need to scroll
-        everything: """
-
-        # Keep track of the shift amount
         self.world_shift += shift_x
 
-        # Go through all the sprite lists and shift
         for platform in self.platform_list:
             platform.rect.x += shift_x
 
