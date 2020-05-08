@@ -140,8 +140,6 @@ class Game:
             self.shift_world(diff)
 
 
-        #current_position = self.player.rect.x + self.world_shift
-        
         if( abs( (self.right_wall.rect.x - self.right_wall.rect.width / 2) - (self.player.rect.x + self.player.rect.width / 2)) == self.player.rect.width):
             self.playing = False
             self.running = False
