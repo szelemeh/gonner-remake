@@ -44,14 +44,13 @@ class Player(pg.sprite.Sprite):
             self.change_y = 0
 
     def calc_grav(self):
-        if self.change_y == 0:
-            self.change_y = 1
-        else:
-            self.change_y += .35
+
+        self.change_y += .35
 
         if self.rect.y >= HEIGHT - self.rect.height and self.change_y >= 0:
             self.change_y = 0
             self.rect.y = HEIGHT - self.rect.height
+
 
     def jump(self):
 
