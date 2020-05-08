@@ -50,8 +50,11 @@ class Game:
         self.all_sprites.add(self.slime)
         self.all_sprites.add(self.ghost)
 
-        # ceiling = Platform(0, 0, WIDTH * 10, 100)
-        # self.platform_list.add(ceiling)
+        self.right_wall = Platform(WIDTH * 4, 0, 120, HEIGHT)
+        self.platform_list.add(self.right_wall)
+        self.all_sprites.add(self.right_wall)
+        self.player.collide_list.add(self.right_wall)
+
 
         p2 = Platform(WIDTH / 2 - 400, 100, 200, 20)
         p3 = Platform(WIDTH / 2 - 200, HEIGHT * 9 / 10, 100, 20)
@@ -60,11 +63,22 @@ class Game:
 
         self.all_sprites.add(p2)
         self.all_sprites.add(p3)
-        # self.all_sprites.add(ceiling)
 
         self.player.collide_list.add(p2)
         self.player.collide_list.add(p3)
-        # self.player.collide_list.add(ceiling)
+
+        self.create_wall(room[0][8][0], room[0][8][1] + TILE_SIZE * 2, 2)
+        
+        self.create_wall(room[1][1][2], room[1][1][3], 4)
+        self.create_wall(room[1][3][2], room[1][3][3], 2)
+
+        self.create_wall(room[2][0][2], room[2][0][3], 4)
+        self.create_wall(room[2][0][2], room[2][0][3], 4)
+
+        self.create_wall(room[3][0][2], room[3][0][3], 3) 
+        self.create_wall(room[3][1][2], room[3][1][3], 1)
+        self.create_wall(room[3][7][2], room[3][7][3], 4)
+
         self.run()
 
     def run(self):
@@ -76,11 +90,18 @@ class Game:
             self.draw()
 
     def update(self):
+
+        for enemy in self.enemy_list:
+            if abs(enemy.rect.x - self.player.rect.x) == self.player.rect.width / 2 and self.player.rect.bottom == enemy.rect.bottom:
+                self.player.kill()
+
         self.all_sprites.update()
         self.worm.update()
 
     def events(self):
         # Game Loop - events
+
+        go_right = False
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -93,6 +114,7 @@ class Game:
                     self.player.go_left()
                 if event.key == pg.K_RIGHT:
                     self.player.go_right()
+                    go_right = True
                 if event.key == pg.K_UP:
                     self.player.jump()
 
@@ -115,6 +137,14 @@ class Game:
             self.player.rect.left = 120
             self.shift_world(diff)
 
+
+        #current_position = self.player.rect.x + self.world_shift
+        
+        if( abs( (self.right_wall.rect.x - self.right_wall.rect.width / 2) - (self.player.rect.x + self.player.rect.width / 2)) == self.player.rect.width):
+            self.playing = False
+            self.running = False
+
+    
     def draw(self):
 
         # Draw the background
@@ -148,7 +178,6 @@ class Game:
 
         for enemy in self.enemy_list:
             enemy.rect.x += shift_x
-
 
 g = Game()
 g.show_start_screen()
