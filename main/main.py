@@ -1,9 +1,14 @@
-import pygame as pg
-import random
+from random import randint
 
-from settings import *
-from sprites import *
-from enemies import *
+import pygame as pg
+from pygame.examples.aliens import Player
+
+from main.settings import *
+from sprites.enemies.air_enemies.ghost import Ghost
+from sprites.enemies.ground_enemies.slime import Slime
+from sprites.enemies.ground_enemies.worm import Worm
+from sprites.world.platform import Platform
+from sprites.world.tile import Tile
 
 
 class Game:
@@ -33,7 +38,6 @@ class Game:
         self.tiles_list = pg.sprite.Group()
         self.enemy_list = pg.sprite.Group()
 
-
         self.player = Player()
         self.all_sprites.add(self.player)
 
@@ -53,7 +57,6 @@ class Game:
         self.all_sprites.add(self.right_wall)
         self.player.collide_list.add(self.right_wall)
 
-
         p2 = Platform(WIDTH / 2 - 400, 100, 200, 20)
         p3 = Platform(WIDTH / 2 - 200, HEIGHT * 9 / 10, 100, 20)
         self.platform_list.add(p2)
@@ -68,17 +71,17 @@ class Game:
         self.create_wall(room[0][8][0], room[0][8][1] + TILE_SIZE * 2, 2)
 
         for i in range(3):
-            random = randint(3*i, 3*i + 2)
+            random = randint(3 * i, 3 * i + 2)
             n = randint(1, 4)
             self.create_wall(room[1][random][0], room[1][random][1], n)
-        
+
         for i in range(3):
-            random = randint(3*i, 3*i + 2)
+            random = randint(3 * i, 3 * i + 2)
             n = randint(1, 4)
             self.create_wall(room[2][random][0], room[2][random][1], n)
 
         for i in range(3):
-            random = randint(3*i, 3*i + 2)
+            random = randint(3 * i, 3 * i + 2)
             n = randint(1, 4)
             self.create_wall(room[3][random][0], room[3][random][1], n)
 
@@ -95,7 +98,8 @@ class Game:
     def update(self):
 
         for enemy in self.enemy_list:
-            if abs(enemy.rect.x - self.player.rect.x) == self.player.rect.width / 2 and self.player.rect.bottom == enemy.rect.bottom:
+            if abs(
+                    enemy.rect.x - self.player.rect.x) == self.player.rect.width / 2 and self.player.rect.bottom == enemy.rect.bottom:
                 self.player.kill()
 
         self.all_sprites.update()
@@ -130,23 +134,22 @@ class Game:
         self.all_sprites.update()
 
         if self.player.rect.right >= 500:
-            diff = self.player.rect.right - 500 # shift the world left
+            diff = self.player.rect.right - 500  # shift the world left
             self.player.rect.right = 500
             self.shift_world(-diff)
 
         if self.player.rect.left <= 500:
-            diff = 500 - self.player.rect.left # shift the world right
+            diff = 500 - self.player.rect.left  # shift the world right
             self.player.rect.left = 500
             self.shift_world(diff)
 
+        # current_position = self.player.rect.x + self.world_shift
 
-        #current_position = self.player.rect.x + self.world_shift
-        
-        if( abs( (self.right_wall.rect.x - self.right_wall.rect.width / 2) - (self.player.rect.x + self.player.rect.width / 2)) == self.player.rect.width):
+        if (abs((self.right_wall.rect.x - self.right_wall.rect.width / 2) - (
+                self.player.rect.x + self.player.rect.width / 2)) == self.player.rect.width):
             self.playing = False
             self.running = False
 
-    
     def draw(self):
 
         self.screen.fill(RED)
@@ -171,6 +174,7 @@ class Game:
 
         for enemy in self.enemy_list:
             enemy.rect.x += shift_x
+
 
 g = Game()
 g.show_start_screen()

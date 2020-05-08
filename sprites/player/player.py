@@ -1,5 +1,5 @@
+from main.settings import *
 import pygame as pg
-from settings import *
 
 
 class Player(pg.sprite.Sprite):
@@ -19,7 +19,7 @@ class Player(pg.sprite.Sprite):
         self.change_y = 0
 
     def update(self):
-        
+
         self.calc_grav()
 
         self.rect.x += self.change_x
@@ -70,26 +70,3 @@ class Player(pg.sprite.Sprite):
 
     def stop(self):
         self.change_x = 0
-
-
-class Tile(pg.sprite.Sprite):
-    def __init__(self, x, y, size=TILE_SIZE):
-        pg.sprite.Sprite.__init__(self)
-        self.image = pg.Surface((size, size))
-        self.image.fill(GREY)
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-        self.size = size
-
-
-class Platform(pg.sprite.Sprite):
-    def __init__(self, x, y, w, h):
-        pg.sprite.Sprite.__init__(self)
-        self.image = pg.Surface((w, h))
-        self.image.fill(GREY)
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-        self.width = w
-        self.height = h
