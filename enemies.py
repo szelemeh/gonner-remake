@@ -34,10 +34,7 @@ class Enemy(pg.sprite.Sprite):
         self.target = target
 
     def apply_gravity(self):
-        if self.vel_y == 0:
-            self.vel_y = 1
-        else:
-            self.vel_y += .35
+        self.vel_y += .35
 
         # See if we are on the ground.
         if self.rect.y >= HEIGHT - self.rect.height and self.vel_y >= 0:
