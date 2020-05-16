@@ -92,16 +92,24 @@ class Game:
             self.events()
             self.update()
             self.draw()
+            self.draw_text("lol", 48, WHITE, WIDTH / 2, HEIGHT / 2)
 
     def update(self):
 
         for enemy in self.enemy_list:
             if abs(enemy.rect.x - self.player.rect.x) == self.player.rect.width / 2 and self.player.rect.bottom == enemy.rect.bottom:
+                # self.player.kill()
+                # self.playing = False
+                self.player.hp -= 10
+
+            if(self.player.hp <= 0):
                 self.player.kill()
                 self.playing = False
 
         self.all_sprites.update()
         self.worm.update()
+
+        print(self.player.hp)
 
     def events(self):
         # Game Loop - events
@@ -148,7 +156,8 @@ class Game:
     def draw(self):
 
         self.screen.fill(RED)
-
+        stats = "HP: " + str(self.player.hp) + ", money: " + str(self.player.money)
+        self.draw_text(stats, 20, WHITE, 80, 20)
         self.all_sprites.draw(self.screen)
         pg.display.flip()
 
