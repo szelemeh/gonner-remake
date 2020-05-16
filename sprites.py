@@ -1,53 +1,84 @@
 import pygame as pg
 from settings import *
-vec = pg.math.Vector2
+
 
 class Player(pg.sprite.Sprite):
+
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
-        self.image = pg.Surface((30, 40))
-        self.image.fill(LIGHTBLUE)
-        self.rect = self.image.get_rect()
-        self.rect.center = (WIDTH / 2, HEIGHT / 2)
-        self.position = vec(WIDTH / 2, HEIGHT / 2)
-        self.velocity = vec(0, 0)
-        self.acceleration = vec(0, 0)
 
-    def jump(self):
-            self.velocity.y = -15
+        width = 40
+        height = 60
+        self.image = pg.Surface((width, height))
+        self.image.fill(LIGHTBLUE)
+        self.collide_list = pg.sprite.Group()
+
+        self.rect = self.image.get_rect()
+
+        self.change_x = 0
+        self.change_y = 0
 
     def update(self):
-        self.acceleration = vec(0, 0.5)
+        
+        self.calc_grav()
 
-        keys_pressed = pg.key.get_pressed()
-        if keys_pressed[pg.K_LEFT]:
-            self.acceleration.x = -PLAYER_ACCELERATION
-        if keys_pressed[pg.K_RIGHT]:
-            self.acceleration.x = PLAYER_ACCELERATION
+        self.rect.x += self.change_x
 
-        # apply friction
-        self.acceleration.x += self.velocity.x * PLAYER_FRICTION
-        # equations of motion
-        self.velocity += self.acceleration
-        self.position += self.velocity + 0.5 * self.acceleration
-        # wrap around the sides of the screen
-        if self.position.x > WIDTH:
-            self.position.x = 0
-        if self.position.x < 0:
-            self.position.x = WIDTH
+        block_hit_list = pg.sprite.spritecollide(self, self.collide_list, False)
+        for block in block_hit_list:
+            if self.change_x > 0:
+                self.rect.right = block.rect.left
+            elif self.change_x < 0:
+                self.rect.left = block.rect.right
 
-        self.rect.midbottom = self.position
+        self.rect.y += self.change_y
+
+        block_hit_list = pg.sprite.spritecollide(self, self.collide_list, False)
+        for block in block_hit_list:
+
+            if self.change_y > 0:
+                self.rect.bottom = block.rect.top
+            elif self.change_y < 0:
+                self.rect.top = block.rect.bottom
+
+            self.change_y = 0
+
+    def calc_grav(self):
+
+        self.change_y += .35
+
+        if self.rect.y >= HEIGHT - self.rect.height and self.change_y >= 0:
+            self.change_y = 0
+            self.rect.y = HEIGHT - self.rect.height
+
+    def jump(self):
+
+        self.rect.y += 2
+        platform_hit_list = pg.sprite.spritecollide(self, self.collide_list, False)
+        self.rect.y -= 2
+
+        if len(platform_hit_list) > 0 or self.rect.bottom >= HEIGHT:
+            self.change_y = -13
+
+    def go_left(self):
+        self.change_x = -6
+
+    def go_right(self):
+        self.change_x = 6
+
+    def stop(self):
+        self.change_x = 0
 
 
 class Tile(pg.sprite.Sprite):
-  def __init__(self, x, y, size=TILE_SIZE):
-    pg.sprite.Sprite.__init__(self)
-    self.image = pg.Surface((size, size))
-    self.image.fill(GREY)
-    self.rect = self.image.get_rect()
-    self.rect.x = x
-    self.rect.y = y
-    self.size = size
+    def __init__(self, x, y, size=TILE_SIZE):
+        pg.sprite.Sprite.__init__(self)
+        self.image = pg.Surface((size, size))
+        self.image.fill(GREY)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.size = size
 
 
 class Platform(pg.sprite.Sprite):
