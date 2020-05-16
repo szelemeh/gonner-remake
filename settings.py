@@ -4,7 +4,10 @@ WIDTH = 1023
 HEIGHT = 576
 FPS = 60
 
+FONT_NAME = 'arial'
+
 TILE_SIZE = 32
+
 
 # Player properties
 PLAYER_SPEED = 6
@@ -18,14 +21,6 @@ BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
 LIGHTBLUE = (72, 132, 130)
 GREY = (50, 32, 36)
-
-TITLE = "GoNNER"
-#WIDTH = 1024
-WIDTH = 1023
-HEIGHT = 576
-FPS = 60
-
-TILE_SIZE = 32
 
 area_h = HEIGHT / 3
 area_w = WIDTH / 3
