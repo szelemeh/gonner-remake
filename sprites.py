@@ -17,6 +17,8 @@ class Player(pg.sprite.Sprite):
 
         self.change_x = 0
         self.change_y = 0
+        self.hp = 50
+        self.money = 0
 
     def update(self):
         
