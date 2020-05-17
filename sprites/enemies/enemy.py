@@ -2,7 +2,7 @@ import pygame as pg
 from math import sqrt
 from random import randint
 import glob
-from main.settings import *
+from game.settings import *
 
 
 def get_rand_member_of(members):
@@ -17,7 +17,7 @@ def get_distance_between(x1, y1, x2, y2):
 
 class Enemy(pg.sprite.Sprite):
 
-    def __init__(self, x, y, width, height, target):
+    def __init__(self, x, y, width, height, images_left, images_right, target):
         super().__init__()
 
         self.image = pg.Surface((width, height))
@@ -30,6 +30,12 @@ class Enemy(pg.sprite.Sprite):
         self.vel_x = 0
         self.vel_y = 0
 
+        self.images_left = images_left
+        self.images_right = images_right
+        self.images = images_left
+        self.index = 0
+        self.image_change_countdown = 70
+
         self.target = target
 
     def apply_gravity(self):
@@ -39,15 +45,6 @@ class Enemy(pg.sprite.Sprite):
         if self.rect.y >= HEIGHT - self.rect.height and self.vel_y >= 0:
             self.vel_y = 0
             self.rect.y = HEIGHT - self.rect.height
-
-    def load_images(self, left, right=''):
-        if right == '':
-            right = left
-        self.index = 0
-        self.images_left = [pg.image.load(img) for img in glob.glob(left)]
-        self.images_right = [pg.image.load(img) for img in glob.glob(right)]
-        self.images = self.images_left
-        self.image_change_countdown = 70
 
     def update(self):
 

@@ -1,4 +1,4 @@
-from main.settings import *
+from game.settings import *
 import pygame as pg
 
 
@@ -15,33 +15,33 @@ class Player(pg.sprite.Sprite):
 
         self.rect = self.image.get_rect()
 
-        self.change_x = 0
-        self.change_y = 0
+        self.vel_x = 0
+        self.vel_y = 0
 
     def update(self):
 
         self.apply_gravity()
 
-        self.rect.x += self.change_x
+        self.rect.x += self.vel_x
 
         block_hit_list = pg.sprite.spritecollide(self, self.collide_list, False)
         for block in block_hit_list:
-            if self.change_x > 0:
+            if self.vel_x > 0:
                 self.rect.right = block.rect.left
-            elif self.change_x < 0:
+            elif self.vel_x < 0:
                 self.rect.left = block.rect.right
 
-        self.rect.y += self.change_y
+        self.rect.y += self.vel_y
 
         block_hit_list = pg.sprite.spritecollide(self, self.collide_list, False)
         for block in block_hit_list:
 
-            if self.change_y > 0:
+            if self.vel_y > 0:
                 self.rect.bottom = block.rect.top
-            elif self.change_y < 0:
+            elif self.vel_y < 0:
                 self.rect.top = block.rect.bottom
 
-            self.change_y = 0
+            self.vel_y = 0
 
     def apply_gravity(self):
         self.vel_y += .35
@@ -59,13 +59,13 @@ class Player(pg.sprite.Sprite):
         self.rect.y -= 2
 
         if len(platform_hit_list) > 0 or self.rect.bottom >= HEIGHT:
-            self.change_y = -13
+            self.vel_y = -13
 
     def go_left(self):
-        self.change_x = -6
+        self.vel_x = -6
 
     def go_right(self):
-        self.change_x = 6
+        self.vel_x = 6
 
     def stop(self):
-        self.change_x = 0
+        self.vel_x = 0

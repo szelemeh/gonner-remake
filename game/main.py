@@ -1,14 +1,19 @@
+from glob import glob
 from random import randint
 
 import pygame as pg
-from pygame.examples.aliens import Player
 
-from main.settings import *
+from game.settings import *
 from sprites.enemies.air_enemies.ghost import Ghost
 from sprites.enemies.ground_enemies.slime import Slime
 from sprites.enemies.ground_enemies.worm import Worm
+from sprites.player.player import Player
 from sprites.world.platform import Platform
 from sprites.world.tile import Tile
+
+
+def get_images(path):
+    return [pg.image.load(img) for img in glob(path)]
 
 
 class Game:
@@ -41,16 +46,19 @@ class Game:
         self.player = Player()
         self.all_sprites.add(self.player)
 
-        self.worm = Worm(WIDTH / 3, HEIGHT / 2, 63, 23, self.player)
-        self.slime = Slime(WIDTH / 3, HEIGHT / 2, 63, 23, self.player)
-        self.ghost = Ghost(WIDTH / 3, HEIGHT / 2, 63, 23, self.player)
+        self.worm = Worm(WIDTH / 3, HEIGHT / 2, 63, 23,
+                         get_images("../img/worm/left/*"),
+                         get_images("../img/worm/right/*"),
+                         self.player)
+        # self.slime = Slime(WIDTH / 3, HEIGHT / 2, 63, 23, self.player)
+        # self.ghost = Ghost(WIDTH / 3, HEIGHT / 2, 63, 23, self.player)
 
         self.enemy_list.add(self.worm)
-        self.enemy_list.add(self.ghost)
-        self.enemy_list.add(self.slime)
+        # self.enemy_list.add(self.ghost)
+        # self.enemy_list.add(self.slime)
         self.all_sprites.add(self.worm)
-        self.all_sprites.add(self.slime)
-        self.all_sprites.add(self.ghost)
+        # self.all_sprites.add(self.slime)
+        # self.all_sprites.add(self.ghost)
 
         self.right_wall = Platform(WIDTH * 4, 0, 120, HEIGHT)
         self.platform_list.add(self.right_wall)
@@ -126,9 +134,9 @@ class Game:
                     self.player.jump()
 
             if event.type == pg.KEYUP:
-                if event.key == pg.K_LEFT and self.player.change_x < 0:
+                if event.key == pg.K_LEFT and self.player.vel_x < 0:
                     self.player.stop()
-                if event.key == pg.K_RIGHT and self.player.change_x > 0:
+                if event.key == pg.K_RIGHT and self.player.vel_x > 0:
                     self.player.stop()
 
         self.all_sprites.update()
