@@ -4,10 +4,9 @@ from random import randint
 import pygame as pg
 
 from game.settings import *
-from sprites.enemies.air_enemies.ghost import Ghost
-from sprites.enemies.ground_enemies.slime import Slime
 from sprites.enemies.ground_enemies.worm import Worm
 from sprites.player.player import Player
+from sprites.world.gold import Gold
 from sprites.world.platform import Platform
 from sprites.world.tile import Tile
 
@@ -26,6 +25,7 @@ class Game:
         self.running = True
         self.world_shift = 0
         self.can_jump = True
+        self.font_name = pg.font.match_font(FONT_NAME)
 
     def create_wall(self, x, y, n):
         for i in range(n):
@@ -38,11 +38,15 @@ class Game:
     def new(self):
         self.all_sprites = pg.sprite.Group()
         self.player_sprite = pg.sprite.Group()
-        self.all_objects = pg.sprite.Group()
         self.platform_list = pg.sprite.Group()
         self.tiles_list = pg.sprite.Group()
         self.enemy_list = pg.sprite.Group()
 
+        self.gold = pg.sprite.Group()
+
+        money = Gold(WIDTH / 2, HEIGHT - 10, 10, 10)
+        self.gold.add(money)
+        self.all_sprites.add(money)
         self.player = Player()
         self.all_sprites.add(self.player)
 
@@ -106,17 +110,31 @@ class Game:
     def update(self):
 
         for enemy in self.enemy_list:
+            counter = 1000000
             if abs(
-                    enemy.rect.x - self.player.rect.x) == self.player.rect.width / 2 and self.player.rect.bottom == enemy.rect.bottom:
-                self.player.kill()
+                    enemy.rect.x - self.player.rect.x) <= self.player.rect.width / 2 and self.player.rect.bottom == enemy.rect.bottom:
+                if counter == 1000000:
+                    self.player.hp -= 1
+                counter -= 1
+                if counter == 0:
+                    counter = 1000000
+
+        if self.player.hp <= 0:
+            self.player.kill()
+            self.playing = False
+
+        for gold in self.gold:
+            if abs(
+                    gold.rect.x - self.player.rect.x) <= self.player.rect.width / 2 and self.player.rect.bottom == gold.rect.bottom:
+                gold.kill()
+                self.player.money += 10
 
         self.all_sprites.update()
         self.worm.update()
 
-    def events(self):
-        # Game Loop - events
+        print(self.player.hp)
 
-        go_right = False
+    def events(self):
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -153,23 +171,52 @@ class Game:
 
         # current_position = self.player.rect.x + self.world_shift
 
-        if (abs((self.right_wall.rect.x - self.right_wall.rect.width / 2) - (
-                self.player.rect.x + self.player.rect.width / 2)) == self.player.rect.width):
-            self.playing = False
-            self.running = False
+        if abs((self.right_wall.rect.x - self.right_wall.rect.width / 2) - (
+                self.player.rect.x + self.player.rect.width / 2)) == self.player.rect.width:
+            self.go_to_store()
 
     def draw(self):
-
         self.screen.fill(RED)
-
+        stats = "HP: " + str(self.player.hp) + ", money: " + str(self.player.money)
+        self.draw_text(stats, 20, WHITE, 80, 20)
         self.all_sprites.draw(self.screen)
         pg.display.flip()
 
     def show_start_screen(self):
-        pass  # here will be game start screen
+        print("Start")
+        self.screen.fill(RED)
+        self.draw_text(TITLE, 48, WHITE, WIDTH / 2, HEIGHT / 4)
+        self.draw_text("Use arrows to move and jump", 22, WHITE, WIDTH / 2, HEIGHT / 2)
+        self.draw_text("Press a key to play", 22, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
+        pg.display.flip()
+        self.wait_for_key()
 
     def show_go_screen(self):
-        pass  # here will be end game screen
+        print("End")
+        if not self.running:
+            return
+        self.screen.fill(RED)
+        self.draw_text("GAME OVER", 48, WHITE, WIDTH / 2, HEIGHT / 4)
+        pg.display.flip()
+        self.wait_for_key()
+
+    def go_to_store(self):
+        print("is in store")
+        self.screen.fill(RED)
+        self.draw_text("Store", 48, WHITE, WIDTH / 2, HEIGHT / 4)
+        self.draw_text("Things you can buy: ", 22, WHITE, WIDTH / 2, HEIGHT / 2)
+        self.draw_text("Press Enter to exit store", 22, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
+        pg.display.flip()
+        waiting = True
+        while waiting:
+            self.playing = False
+            for event in pg.event.get():
+                if (event.type == pg.KEYDOWN) and (event.key == pg.K_RETURN):
+                    waiting = False
+                    print("Enter pressed")
+                if event.type == pg.QUIT:
+                    waiting = False
+                    self.playing = False
 
     def shift_world(self, shift_x):
         self.world_shift += shift_x
@@ -182,6 +229,24 @@ class Game:
 
         for enemy in self.enemy_list:
             enemy.rect.x += shift_x
+
+    def wait_for_key(self):
+        waiting = True
+        while waiting:
+            self.clock.tick(FPS)
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    waiting = False
+                    self.running = False
+                if event.type == pg.KEYUP:
+                    waiting = False
+
+    def draw_text(self, text, size, color, x, y):
+        font = pg.font.Font(self.font_name, size)
+        text_surface = font.render(text, True, color)
+        text_rect = text_surface.get_rect()
+        text_rect.midtop = (x, y)
+        self.screen.blit(text_surface, text_rect)
 
 
 g = Game()

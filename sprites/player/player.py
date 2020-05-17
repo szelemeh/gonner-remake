@@ -17,6 +17,8 @@ class Player(pg.sprite.Sprite):
 
         self.vel_x = 0
         self.vel_y = 0
+        self.hp = 50
+        self.money = 0
 
     def update(self):
 
@@ -44,13 +46,12 @@ class Player(pg.sprite.Sprite):
             self.vel_y = 0
 
     def apply_gravity(self):
+
         self.vel_y += .35
 
-        # See if we are on the ground.
         if self.rect.y >= HEIGHT - self.rect.height and self.vel_y >= 0:
             self.vel_y = 0
             self.rect.y = HEIGHT - self.rect.height
-
 
     def jump(self):
 
