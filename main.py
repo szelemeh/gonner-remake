@@ -29,11 +29,15 @@ class Game:
     def new(self):
         self.all_sprites = pg.sprite.Group()
         self.player_sprite = pg.sprite.Group()
-        self.all_objects = pg.sprite.Group()
         self.platform_list = pg.sprite.Group()
         self.tiles_list = pg.sprite.Group()
         self.enemy_list = pg.sprite.Group()
 
+        self.gold = pg.sprite.Group()
+
+        money = Gold(WIDTH / 2, HEIGHT - 10, 10, 10)
+        self.gold.add(money)
+        self.all_sprites.add(money)
 
         self.player = Player()
         self.all_sprites.add(self.player)
@@ -92,19 +96,25 @@ class Game:
             self.events()
             self.update()
             self.draw()
-            self.draw_text("lol", 48, WHITE, WIDTH / 2, HEIGHT / 2)
 
     def update(self):
 
         for enemy in self.enemy_list:
-            if abs(enemy.rect.x - self.player.rect.x) == self.player.rect.width / 2 and self.player.rect.bottom == enemy.rect.bottom:
-                # self.player.kill()
-                # self.playing = False
-                self.player.hp -= 10
+            counter = 1000000
+            if abs(enemy.rect.x - self.player.rect.x) <= self.player.rect.width / 2 and self.player.rect.bottom == enemy.rect.bottom:
+                if counter == 1000000:
+                    self.player.hp -= 1
+                counter -= 1
+                if(counter == 0): counter = 1000000
 
-            if(self.player.hp <= 0):
-                self.player.kill()
-                self.playing = False
+        if(self.player.hp <= 0):
+            self.player.kill()
+            self.playing = False
+
+        for gold in self.gold:
+            if abs( gold.rect.x - self.player.rect.x ) <= self.player.rect.width / 2 and self.player.rect.bottom == gold.rect.bottom:
+                gold.kill()
+                self.player.money += 10
 
         self.all_sprites.update()
         self.worm.update()
@@ -112,8 +122,7 @@ class Game:
         print(self.player.hp)
 
     def events(self):
-        # Game Loop - events
-
+        
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 if self.playing:
@@ -150,11 +159,9 @@ class Game:
 
         if( abs( (self.right_wall.rect.x - self.right_wall.rect.width / 2) - (self.player.rect.x + self.player.rect.width / 2)) == self.player.rect.width):
             self.go_to_store()
-            self.playing = False
 
     
     def draw(self):
-
         self.screen.fill(RED)
         stats = "HP: " + str(self.player.hp) + ", money: " + str(self.player.money)
         self.draw_text(stats, 20, WHITE, 80, 20)
@@ -178,6 +185,25 @@ class Game:
         self.draw_text("GAME OVER", 48, WHITE, WIDTH / 2, HEIGHT / 4)
         pg.display.flip()
         self.wait_for_key()
+
+    def go_to_store(self):
+        print("is in store")
+        self.screen.fill(RED)
+        self.draw_text("Store", 48, WHITE, WIDTH / 2, HEIGHT / 4)
+        self.draw_text("Things you can buy: ", 22, WHITE, WIDTH / 2, HEIGHT / 2)
+        self.draw_text("Press Enter to exit store", 22, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
+        pg.display.flip()
+        waiting = True
+        while(waiting):
+            self.playing = False
+            for event in pg.event.get():
+                if (event.type == pg.KEYDOWN) and (event.key == pg.K_RETURN):
+                    waiting = False
+                    print("Enter pressed")
+                if event.type == pg.QUIT:
+                    waiting = False
+                    self.playing = False
+                
 
     def shift_world(self, shift_x):
         self.world_shift += shift_x
@@ -210,9 +236,6 @@ class Game:
         text_rect.midtop = (x, y)
         self.screen.blit(text_surface, text_rect)
 
-    def go_to_store(self):
-        print("is in store")
-        self.show_go_screen()
 
 g = Game()
 g.show_start_screen()
