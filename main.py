@@ -2,13 +2,14 @@ from glob import glob
 from random import randint
 
 import pygame as pg
-
 from game.settings import *
+
 from sprites.enemies.ground_enemies.worm import Worm
 from sprites.player.player import Player
 from sprites.world.gold import Gold
 from sprites.world.platform import Platform
 from sprites.world.tile import Tile
+# from setup import *
 
 
 def get_images(path):
@@ -51,8 +52,8 @@ class Game:
         self.all_sprites.add(self.player)
 
         self.worm = Worm(WIDTH / 3, HEIGHT / 2, 63, 23,
-                         get_images("../img/worm/left/*"),
-                         get_images("../img/worm/right/*"),
+                         get_images("img/worm/left/*"),
+                         get_images("img/worm/right/*"),
                          self.player)
         # self.slime = Slime(WIDTH / 3, HEIGHT / 2, 63, 23, self.player)
         # self.ghost = Ghost(WIDTH / 3, HEIGHT / 2, 63, 23, self.player)
