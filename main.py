@@ -266,8 +266,7 @@ class Game:
         self.screen.fill(RED)
         self.draw_info()
         self.draw_text("Store", 48, WHITE, WIDTH / 2, HEIGHT / 4)
-        self.draw_text("Things you can buy: (1) Extra speed: 50g    (2) Extra defense: 50g", 22, WHITE, WIDTH / 2,
-                       HEIGHT / 2)
+        self.draw_text("Things you can buy: (1) Extra speed: 50g    (2) Extra defense: 50g", 22, WHITE, WIDTH / 2, HEIGHT / 2)
         self.draw_text("Press Enter to exit store", 22, WHITE, WIDTH / 2, HEIGHT * 5 / 6)
         pg.display.flip()
         waiting = True
@@ -286,8 +285,21 @@ class Game:
                         self.draw_text("Not enough money", 20, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
                         pg.display.flip()
 
+                if event.type == pg.KEYDOWN and event.key == pg.K_2:
+                    if self.player.money >= 50:
+                        print("bought hp")
+                        self.player.hp += 500
+                        self.player.money -= 50
+                        self.screen.fill(RED, (0, 0, 200, 200))
+                        self.draw_info()
+                        pg.display.flip()
+                    else:
+                        self.draw_text("Not enough money", 20, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
+                        pg.display.flip()
+
                 if (event.type == pg.KEYDOWN) and (event.key == pg.K_RETURN):
                     waiting = False
+                    self.go_to_next_level()
                 if event.type == pg.QUIT:
                     waiting = False
                     self.playing = False
