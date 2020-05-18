@@ -1,22 +1,16 @@
 from game.settings import *
 import pygame as pg
 
+from sprites.actor import Actor
 
-class Player(pg.sprite.Sprite):
 
-    def __init__(self):
-        pg.sprite.Sprite.__init__(self)
+class Player(Actor):
 
-        width = 40
-        height = 60
-        self.image = pg.Surface((width, height))
-        self.image.fill(LIGHTBLUE)
+    def __init__(self, x, y, player_animation):
+        super().__init__(x, y, 70, 95, player_animation)
+
         self.collide_list = pg.sprite.Group()
 
-        self.rect = self.image.get_rect()
-
-        self.vel_x = 0
-        self.vel_y = 0
         self.hp = 50
         self.money = 0
 
@@ -45,13 +39,7 @@ class Player(pg.sprite.Sprite):
 
             self.vel_y = 0
 
-    def apply_gravity(self):
-
-        self.vel_y += .35
-
-        if self.rect.y >= HEIGHT - self.rect.height and self.vel_y >= 0:
-            self.vel_y = 0
-            self.rect.y = HEIGHT - self.rect.height
+        Actor.update(self)
 
     def jump(self):
 

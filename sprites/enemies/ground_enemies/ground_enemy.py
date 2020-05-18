@@ -1,16 +1,19 @@
+from sprites.actor import ActorState
 from sprites.enemies.enemy import *
 
 
 class GroundEnemy(Enemy):
-    def __init__(self, x, y, width, height, images_left, images_right, target):
-        super().__init__(x, y, width, height, images_left, images_right, target)
+    def __init__(self, x, y, width, height, animation, target):
+        super().__init__(x, y, width, height, animation, target)
+
+    def get_state(self):
+        if self.vel_x > 0:
+            return ActorState.MOVING_RIGHT
+        else:
+            return ActorState.MOVING_LEFT
 
     def update(self):
-        if self.vel_x > 0:
-            self.images = self.images_right
-        else:
-            self.images = self.images_left
-
         Enemy.apply_gravity(self)
-
-        Enemy.update(self)
+        self.rect.x += self.vel_x
+        self.rect.y += self.vel_y
+        Actor.update(self)

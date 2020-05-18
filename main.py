@@ -1,19 +1,40 @@
 from glob import glob
 from random import randint
-
+from PIL import Image
 import pygame as pg
-from game.settings import *
 
+from game.settings import *
+from sprites.enemies.enemy import EnemyType
 from sprites.enemies.ground_enemies.worm import Worm
+from sprites.player.gold import Gold
 from sprites.player.player import Player
-from sprites.world.gold import Gold
 from sprites.world.platform import Platform
 from sprites.world.tile import Tile
-# from setup import *
+from sprites.sprite_animation import SpriteAnimation
+
+
+def create_player(x, y) -> Player:
+    animation = SpriteAnimation()
+    animation.add_idle(get_images("img/player/p1_stand.png"))
+    animation.add_move(get_images("img/player/walk/*"))
+    animation.add_jump(get_images("img/player/p1_jump.png"))
+    return Player(x, y, animation)
+
+
+def create_enemy(enemy_type, x, y, target):
+    if enemy_type == EnemyType.GHOST:
+        pass
+    elif enemy_type == EnemyType.SLIME:
+        pass
+    elif enemy_type == EnemyType.WORM:
+        animation = SpriteAnimation()
+        animation.add_idle(get_images("img/worm/walk/worm.png"))
+        animation.add_move(get_images("img/worm/walk/*"))
+        return Worm(x, y, 63, 23, animation, target)
 
 
 def get_images(path):
-    return [pg.image.load(img) for img in glob(path)]
+    return [Image.open(img) for img in glob(path)]
 
 
 class Game:
@@ -36,6 +57,10 @@ class Game:
                 self.tiles_list.add(tile)
                 self.player.collide_list.add(tile)
 
+    def add_enemy(self, enemy):
+        self.all_sprites.add(enemy)
+        self.enemy_list.add(enemy)
+
     def new(self):
         self.all_sprites = pg.sprite.Group()
         self.player_sprite = pg.sprite.Group()
@@ -48,22 +73,10 @@ class Game:
         money = Gold(WIDTH / 2, HEIGHT - 10, 10, 10)
         self.gold.add(money)
         self.all_sprites.add(money)
-        self.player = Player()
+        self.player = create_player(WIDTH / 3, HEIGHT / 2)
         self.all_sprites.add(self.player)
 
-        self.worm = Worm(WIDTH / 3, HEIGHT / 2, 63, 23,
-                         get_images("img/worm/left/*"),
-                         get_images("img/worm/right/*"),
-                         self.player)
-        # self.slime = Slime(WIDTH / 3, HEIGHT / 2, 63, 23, self.player)
-        # self.ghost = Ghost(WIDTH / 3, HEIGHT / 2, 63, 23, self.player)
-
-        self.enemy_list.add(self.worm)
-        # self.enemy_list.add(self.ghost)
-        # self.enemy_list.add(self.slime)
-        self.all_sprites.add(self.worm)
-        # self.all_sprites.add(self.slime)
-        # self.all_sprites.add(self.ghost)
+        self.add_enemy(create_enemy(EnemyType.WORM, WIDTH / 3, HEIGHT / 2, self.player))
 
         self.right_wall = Platform(WIDTH * 4, 0, 120, HEIGHT)
         self.platform_list.add(self.right_wall)
@@ -131,9 +144,7 @@ class Game:
                 self.player.money += 10
 
         self.all_sprites.update()
-        self.worm.update()
-
-        print(self.player.hp)
+        print(self.player.vel_y)
 
     def events(self):
 

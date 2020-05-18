@@ -9,6 +9,7 @@ TILE_SIZE = 32
 
 # Player properties
 PLAYER_SPEED = 6
+GRAVITY = 0.35
 
 # define colors
 WHITE = (255, 255, 255)
