@@ -176,9 +176,9 @@ class Game:
                     have_jumped = True
 
             if event.type == pg.KEYUP:
-                if event.key == pg.K_LEFT and self.player.change_x < 0:
+                if event.key == pg.K_LEFT and self.player.vel_x < 0:
                     self.player.stop()
-                if event.key == pg.K_RIGHT and self.player.change_x > 0:
+                if event.key == pg.K_RIGHT and self.player.vel_x > 0:
                     self.player.stop()
 
         self.all_sprites.update()
