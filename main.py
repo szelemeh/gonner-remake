@@ -4,6 +4,7 @@ from PIL import Image
 import pygame as pg
 
 from game.settings import *
+from sprites.enemies.air_enemies.ghost import Ghost
 from sprites.enemies.enemy import EnemyType
 from sprites.enemies.ground_enemies.worm import Worm
 from sprites.player.gold import Gold
@@ -23,14 +24,25 @@ def create_player(x, y) -> Player:
 
 def create_enemy(enemy_type, x, y, target):
     if enemy_type == EnemyType.GHOST:
-        pass
+        animation = SpriteAnimation()
+        animation.add_idle(get_images("img/ghost/ghost_normal.png"))
+        animation.add_move(get_images("img/ghost/ghost.png"))
+        return Ghost(x, y, 51, 73, animation, target)
+
     elif enemy_type == EnemyType.SLIME:
-        pass
+        animation = SpriteAnimation()
+        animation.add_idle(get_images("img/slime/walk/slime_walk1.png"))
+        animation.add_move(get_images("img/slime/walk/*"))
+        return Worm(x, y, 63, 23, animation, target)
     elif enemy_type == EnemyType.WORM:
         animation = SpriteAnimation()
         animation.add_idle(get_images("img/worm/walk/worm.png"))
         animation.add_move(get_images("img/worm/walk/*"))
         return Worm(x, y, 63, 23, animation, target)
+
+
+def create_gold(x, y):
+    return Gold(x, y, Image.open("img/gold/gold_0.png"))
 
 
 def get_images(path):
@@ -70,13 +82,16 @@ class Game:
 
         self.gold = pg.sprite.Group()
 
-        money = Gold(WIDTH / 2, HEIGHT - 10, 10, 10)
+        money = create_gold(WIDTH / 2, HEIGHT/2)
         self.gold.add(money)
         self.all_sprites.add(money)
         self.player = create_player(WIDTH / 3, HEIGHT / 2)
         self.all_sprites.add(self.player)
 
-        self.add_enemy(create_enemy(EnemyType.WORM, WIDTH / 3, HEIGHT / 2, self.player))
+        for i in range(1, 5):
+            self.add_enemy(create_enemy(EnemyType.WORM, WIDTH / 3, HEIGHT / 2, self.player))
+            self.add_enemy(create_enemy(EnemyType.SLIME, WIDTH - 50, HEIGHT - 50, self.player))
+            self.add_enemy(create_enemy(EnemyType.GHOST, WIDTH - 50, HEIGHT/2, self.player))
 
         self.right_wall = Platform(WIDTH * 4, 0, 120, HEIGHT)
         self.platform_list.add(self.right_wall)
@@ -177,7 +192,7 @@ class Game:
             self.shift_world(-diff)
 
         if self.player.rect.left <= 500:
-            diff = 500 - self.player.rect.left  # shift the world right
+            diff = 500 - self.player.rect.left  # shift the world walk
             self.player.rect.left = 500
             self.shift_world(diff)
 
@@ -241,6 +256,9 @@ class Game:
 
         for enemy in self.enemy_list:
             enemy.rect.x += shift_x
+
+        for gold in self.gold:
+            gold.rect.x += shift_x
 
     def wait_for_key(self):
         waiting = True

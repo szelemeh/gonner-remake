@@ -21,6 +21,8 @@ class Player(Actor):
         self.rect.x += self.vel_x
 
         block_hit_list = pg.sprite.spritecollide(self, self.collide_list, False)
+        if len(block_hit_list) > 0:
+            self.vel_y = -1
         for block in block_hit_list:
             if self.vel_x > 0:
                 self.rect.right = block.rect.left
@@ -46,6 +48,20 @@ class Player(Actor):
         self.rect.y += 2
         platform_hit_list = pg.sprite.spritecollide(self, self.collide_list, False)
         self.rect.y -= 2
+
+        if len(platform_hit_list) > 0:
+            self.vel_y = -13
+
+        self.rect.x += 2
+        platform_hit_list = pg.sprite.spritecollide(self, self.collide_list, False)
+        self.rect.x -= 2
+
+        if len(platform_hit_list) > 0:
+            self.vel_y = -13
+
+        self.rect.x -= 2
+        platform_hit_list = pg.sprite.spritecollide(self, self.collide_list, False)
+        self.rect.x += 2
 
         if len(platform_hit_list) > 0 or self.rect.bottom >= HEIGHT:
             self.vel_y = -13

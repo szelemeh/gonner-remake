@@ -1,3 +1,5 @@
+from typing import Optional
+
 from PIL import ImageOps
 
 from sprites.actor import *
@@ -22,6 +24,12 @@ class SpriteAnimation:
         self.current_images = None
         self.image_change_countdown = 1
         self.index = 0
+        self.move_left = None
+        self.move_right = None
+        self.idle_left = None
+        self.idle_right = None
+        self.jump_left = None
+        self.jump_right = None
 
     def add_move(self, images):
         self.move_left = convert_to_pg_image(mirror(images))

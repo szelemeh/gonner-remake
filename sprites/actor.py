@@ -43,8 +43,9 @@ class Actor(pg.sprite.Sprite):
             return ActorState.MOVING_LEFT
 
     def update(self):
-        self.animation.set_state(self.get_state())
-        self.image = self.animation.update()
+        if self.animation is not None:
+            self.animation.set_state(self.get_state())
+            self.image = self.animation.update()
 
 
 class ActorState(Enum):
