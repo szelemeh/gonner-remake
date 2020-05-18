@@ -1,1 +1,2 @@
-python3 main.py
+make:
+	python3 main.py

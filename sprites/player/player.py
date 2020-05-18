@@ -13,6 +13,7 @@ class Player(Actor):
 
         self.hp = PLAYER_MAX_HP
         self.money = 0
+        self.got_double_speed = False
 
     def update(self):
 

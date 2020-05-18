@@ -96,7 +96,7 @@ class Game:
             self.add_enemy(create_enemy(EnemyType.SLIME, WIDTH - 50, HEIGHT - 50, self.player))
             self.add_enemy(create_enemy(EnemyType.GHOST, WIDTH - 50, HEIGHT / 2, self.player))
 
-        self.add_enemy(SlimeBlock(-500, HEIGHT/2, 150, 150, None, self.player))
+        self.add_enemy(SlimeBlock(-500, HEIGHT / 2, 150, 150, None, self.player))
 
         self.right_wall = Platform(WIDTH * 4, 0, 120, HEIGHT)
         self.platform_list.add(self.right_wall)
@@ -144,25 +144,37 @@ class Game:
     def update(self):
 
         for enemy in self.enemy_list:
-            # counter = 1000000
-            if abs(enemy.rect.x - self.player.rect.x) <= self.player.rect.width / 2 and self.player.rect.bottom == enemy.rect.bottom:
-                # if counter == 1000000:
-                self.player.hp -= 1
-                # counter -= 1
-                # if counter == 0:
-                #     counter = 1000000
+            counter = 1000000
+            if abs(
+                    enemy.rect.x - self.player.rect.x) <= self.player.rect.width / 2 and self.player.rect.bottom == enemy.rect.bottom:
+                if counter == 1000000:
+                    self.player.hp -= 1
+                counter -= 1
+                if counter == 0:
+                    counter = 1000000
+
+            counter_ghost = 1000000
+            if isinstance(enemy, Ghost) and abs(
+                    enemy.rect.x - self.player.rect.x) <= self.player.rect.width / 2 and abs(
+                    enemy.rect.y - self.player.rect.y) <= self.player.rect.height / 2:
+                if counter_ghost == 1000000:
+                    self.player.hp -= 1
+                counter_ghost -= 1
+                if counter_ghost == 0:
+                    counter_ghost = 1000000
 
         if self.player.hp <= 0:
             self.player.kill()
             self.playing = False
 
         for gold in self.gold:
-            if abs(gold.rect.x - self.player.rect.x) <= self.player.rect.width / 2 and self.player.rect.bottom == gold.rect.bottom:
+            if abs(
+                    gold.rect.x - self.player.rect.x) <= self.player.rect.width / 2 and self.player.rect.bottom == gold.rect.bottom:
                 gold.kill()
-                self.player.money += 10
+                self.player.money += 100
 
         self.all_sprites.update()
-        print(self.player.vel_y)
+        # print(self.player.vel_y)
 
     def events(self):
         have_jumped = False
@@ -210,20 +222,31 @@ class Game:
             self.player.rect.left = 500
             self.shift_world(diff)
 
-        # if abs((self.right_wall.rect.x - self.right_wall.rect.width / 2) - (self.player.rect.x + self.player.rect.width / 2)) == self.player.rect.width:
+        # current_position = self.player.rect.x + self.world_shift
+
+        # if abs((self.right_wall.rect.x - self.right_wall.rect.width / 2) - (
+        #         self.player.rect.x + self.player.rect.width / 2)) == self.player.rect.width:
         #     self.go_to_store()
-        if self.right_wall.rect.left == self.player.rect.right:
+
+        if abs((self.right_wall.rect.x - self.right_wall.rect.width / 2) - (
+                self.player.rect.x + self.player.rect.width / 2)) <= 25:
             self.go_to_store()
+
+    def draw_info(self):
+        stats = "HP: " + str(self.player.hp) + ", money: " + str(self.player.money)
+        self.draw_text(stats, 20, WHITE, 80, 20)
+
+        if self.player.got_double_speed:
+            features = "You've got double speed!"
+            self.draw_text(features, 20, WHITE, 120, 40)
 
     def draw(self):
         self.screen.fill(RED)
-        stats = "HP: " + str(self.player.hp) + ", money: " + str(self.player.money)
-        self.draw_text(stats, 20, WHITE, 80, 20)
+        self.draw_info()
         self.all_sprites.draw(self.screen)
         pg.display.flip()
 
     def show_start_screen(self):
-        print("Start")
         self.screen.fill(RED)
         self.draw_text(TITLE, 48, WHITE, WIDTH / 2, HEIGHT / 4)
         self.draw_text("Use arrows to move and jump", 22, WHITE, WIDTH / 2, HEIGHT / 2)
@@ -232,7 +255,6 @@ class Game:
         self.wait_for_key()
 
     def show_go_screen(self):
-        print("End")
         if not self.running:
             return
         self.screen.fill(RED)
@@ -241,19 +263,31 @@ class Game:
         self.wait_for_key()
 
     def go_to_store(self):
-        print("is in store")
         self.screen.fill(RED)
+        self.draw_info()
         self.draw_text("Store", 48, WHITE, WIDTH / 2, HEIGHT / 4)
-        self.draw_text("Things you can buy: ", 22, WHITE, WIDTH / 2, HEIGHT / 2)
-        self.draw_text("Press Enter to exit store", 22, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
+        self.draw_text("Things you can buy: (1) Extra speed: 50g    (2) Extra defense: 50g", 22, WHITE, WIDTH / 2,
+                       HEIGHT / 2)
+        self.draw_text("Press Enter to exit store", 22, WHITE, WIDTH / 2, HEIGHT * 5 / 6)
         pg.display.flip()
         waiting = True
         while waiting:
             self.playing = False
             for event in pg.event.get():
+                if event.type == pg.KEYDOWN and event.key == pg.K_1:
+                    if self.player.money >= 50:
+                        print("bought speed")
+                        self.player.got_double_speed = True
+                        self.player.money -= 50
+                        self.screen.fill(RED, (0, 0, 200, 200))
+                        self.draw_info()
+                        pg.display.flip()
+                    else:
+                        self.draw_text("Not enough money", 20, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
+                        pg.display.flip()
+
                 if (event.type == pg.KEYDOWN) and (event.key == pg.K_RETURN):
                     waiting = False
-                    print("Enter pressed")
                 if event.type == pg.QUIT:
                     waiting = False
                     self.playing = False
