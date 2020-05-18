@@ -47,6 +47,7 @@ class Game:
         self.running = True
         self.world_shift = 0
         self.can_jump = True
+        self.double_speed = False
         self.font_name = pg.font.match_font(FONT_NAME)
 
     def create_wall(self, x, y, n):
@@ -147,7 +148,7 @@ class Game:
         print(self.player.vel_y)
 
     def events(self):
-
+        have_jumped = False
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 if self.playing:
@@ -156,17 +157,28 @@ class Game:
 
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_LEFT:
-                    self.player.go_left()
+                    if self.double_speed:
+                        self.player.go_left_fast()
+                    else:
+                        self.player.go_left()
                 if event.key == pg.K_RIGHT:
-                    self.player.go_right()
-                    go_right = True
+                    if self.double_speed:
+                        self.player.go_right_fast()
+                    else:
+                        self.player.go_right()
+                if event.key == pg.K_LSHIFT:
+                        if self.double_speed == False:
+                            self.double_speed = True
+                        else:
+                            self.double_speed = False
                 if event.key == pg.K_UP:
                     self.player.jump()
+                    have_jumped = True
 
             if event.type == pg.KEYUP:
-                if event.key == pg.K_LEFT and self.player.vel_x < 0:
+                if event.key == pg.K_LEFT and self.player.change_x < 0:
                     self.player.stop()
-                if event.key == pg.K_RIGHT and self.player.vel_x > 0:
+                if event.key == pg.K_RIGHT and self.player.change_x > 0:
                     self.player.stop()
 
         self.all_sprites.update()
