@@ -4,11 +4,10 @@ import pygame as pg
 from sprites.actor import Actor
 
 
-#class Player(pg.sprite.Sprite):
 class Player(Actor):
 
     def __init__(self, x, y, player_animation):
-        super().__init__(x, y, 70, 95, player_animation)
+        super().__init__(x, y, 67, 95, player_animation)
 
         self.collide_list = pg.sprite.Group()
 
@@ -16,7 +15,7 @@ class Player(Actor):
         self.money = 0
 
     def update(self):
-        
+
         self.calc_grav()
 
         self.rect.x += self.vel_x
@@ -83,7 +82,7 @@ class Player(Actor):
 
     def go_right(self):
         self.vel_x = 6
-    
+
     def go_right_fast(self):
         self.vel_x = 12
 

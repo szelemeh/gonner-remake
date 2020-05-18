@@ -83,7 +83,7 @@ class Game:
 
         self.gold = pg.sprite.Group()
 
-        money = create_gold(WIDTH / 2, HEIGHT/2)
+        money = create_gold(WIDTH / 2, HEIGHT / 2)
         self.gold.add(money)
         self.all_sprites.add(money)
         self.player = create_player(WIDTH / 3, HEIGHT / 2)
@@ -92,7 +92,7 @@ class Game:
         for i in range(1, 5):
             self.add_enemy(create_enemy(EnemyType.WORM, WIDTH / 3, HEIGHT / 2, self.player))
             self.add_enemy(create_enemy(EnemyType.SLIME, WIDTH - 50, HEIGHT - 50, self.player))
-            self.add_enemy(create_enemy(EnemyType.GHOST, WIDTH - 50, HEIGHT/2, self.player))
+            self.add_enemy(create_enemy(EnemyType.GHOST, WIDTH - 50, HEIGHT / 2, self.player))
 
         self.right_wall = Platform(WIDTH * 4, 0, 120, HEIGHT)
         self.platform_list.add(self.right_wall)
@@ -182,10 +182,10 @@ class Game:
                     else:
                         self.player.go_right()
                 if event.key == pg.K_LSHIFT:
-                        if self.double_speed == False:
-                            self.double_speed = True
-                        else:
-                            self.double_speed = False
+                    if self.double_speed == False:
+                        self.double_speed = True
+                    else:
+                        self.double_speed = False
                 if event.key == pg.K_UP:
                     self.player.jump()
                     have_jumped = True
@@ -208,10 +208,9 @@ class Game:
             self.player.rect.left = 500
             self.shift_world(diff)
 
-        # current_position = self.player.rect.x + self.world_shift
-
-        if abs((self.right_wall.rect.x - self.right_wall.rect.width / 2) - (
-                self.player.rect.x + self.player.rect.width / 2)) == self.player.rect.width:
+        # if abs((self.right_wall.rect.x - self.right_wall.rect.width / 2) - (self.player.rect.x + self.player.rect.width / 2)) == self.player.rect.width:
+        #     self.go_to_store()
+        if self.right_wall.rect.left == self.player.rect.right:
             self.go_to_store()
 
     def draw(self):
