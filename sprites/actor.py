@@ -18,7 +18,7 @@ class Actor(pg.sprite.Sprite):
 
         self.animation = animation
         self.index = 0
-        self.image_change_countdown = 70
+        self.image_vel_countdown = 70
 
     def apply_gravity(self):
         self.vel_y += GRAVITY
