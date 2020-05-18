@@ -67,10 +67,16 @@ class Player(Actor):
             self.vel_y = -13
 
     def go_left(self):
-        self.vel_x = -6
+        self.change_x = -6
+
+    def go_left_fast(self):
+        self.change_x = -12
 
     def go_right(self):
-        self.vel_x = 6
+        self.change_x = 6
+    
+    def go_right_fast(self):
+        self.change_x = 12
 
     def stop(self):
         self.vel_x = 0
