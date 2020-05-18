@@ -226,12 +226,19 @@ class Game:
                 self.player.rect.x + self.player.rect.width / 2)) <= 25:
             self.go_to_store()
 
+
+    def draw_info(self):
+        stats = "HP: " + str(self.player.hp) + ", money: " + str(self.player.money)
+        self.draw_text(stats, 20, WHITE, 80, 20)
+        
+        if self.player.got_double_speed:
+            features = "You've got double speed!"
+            self.draw_text(features, 20, WHITE, 120, 40)
+
+
     def draw(self):
         self.screen.fill(RED)
-        stats = "HP: " + str(self.player.hp) + ", money: " + str(self.player.money)
-        features = "You've got double speed!"
-        self.draw_text(stats, 20, WHITE, 80, 20)
-        self.draw_text(features, 20, WHITE, 120, 40)
+        self.draw_info()
         self.all_sprites.draw(self.screen)
         pg.display.flip()
 
@@ -253,14 +260,27 @@ class Game:
 
     def go_to_store(self):
         self.screen.fill(RED)
+        self.draw_info()
         self.draw_text("Store", 48, WHITE, WIDTH / 2, HEIGHT / 4)
-        self.draw_text("Things you can buy: Extra speed: 50g    Extra defense: 50g", 22, WHITE, WIDTH / 2, HEIGHT / 2)
-        self.draw_text("Press Enter to exit store", 22, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
+        self.draw_text("Things you can buy: (1) Extra speed: 50g    (2) Extra defense: 50g", 22, WHITE, WIDTH / 2, HEIGHT / 2)
+        self.draw_text("Press Enter to exit store", 22, WHITE, WIDTH / 2, HEIGHT * 5 / 6)
         pg.display.flip()
         waiting = True
         while waiting:
             self.playing = False
             for event in pg.event.get():
+                if event.type == pg.KEYDOWN and event.key == pg.K_1:
+                    if self.player.money >= 50:
+                        print("bought speed")
+                        self.player.got_double_speed = True
+                        self.player.money -= 50
+                        self.screen.fill(RED, (0, 0, 200, 200))
+                        self.draw_info()
+                        pg.display.flip()
+                    else:
+                        self.draw_text("Not enough money", 20, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
+                        pg.display.flip()
+
                 if (event.type == pg.KEYDOWN) and (event.key == pg.K_RETURN):
                     waiting = False
                 if event.type == pg.QUIT:
