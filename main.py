@@ -222,12 +222,6 @@ class Game:
             self.player.rect.left = 500
             self.shift_world(diff)
 
-        # current_position = self.player.rect.x + self.world_shift
-
-        # if abs((self.right_wall.rect.x - self.right_wall.rect.width / 2) - (
-        #         self.player.rect.x + self.player.rect.width / 2)) == self.player.rect.width:
-        #     self.go_to_store()
-
         if abs((self.right_wall.rect.x - self.right_wall.rect.width / 2) - (
                 self.player.rect.x + self.player.rect.width / 2)) <= 25:
             self.go_to_store()
@@ -266,7 +260,7 @@ class Game:
         self.screen.fill(RED)
         self.draw_info()
         self.draw_text("Store", 48, WHITE, WIDTH / 2, HEIGHT / 4)
-        self.draw_text("Things you can buy: (1) Extra speed: 50g    (2) Extra defense: 50g", 22, WHITE, WIDTH / 2, HEIGHT / 2)
+        self.draw_text("Things you can buy: (1) Extra speed: 50g    (2) Extra HP: 50g", 22, WHITE, WIDTH / 2, HEIGHT / 2)
         self.draw_text("Press Enter to exit store", 22, WHITE, WIDTH / 2, HEIGHT * 5 / 6)
         pg.display.flip()
         waiting = True
