@@ -4,6 +4,7 @@ import pygame as pg
 from sprites.actor import Actor
 
 
+#class Player(pg.sprite.Sprite):
 class Player(Actor):
 
     def __init__(self, x, y, player_animation):
@@ -15,8 +16,8 @@ class Player(Actor):
         self.money = 0
 
     def update(self):
-
-        self.apply_gravity()
+        
+        self.calc_grav()
 
         self.rect.x += self.vel_x
 
@@ -41,6 +42,14 @@ class Player(Actor):
 
         Actor.update(self)
 
+    def calc_grav(self):
+
+        self.vel_y += .35
+
+        if self.rect.y >= HEIGHT - self.rect.height and self.vel_y >= 0:
+            self.vel_y = 0
+            self.rect.y = HEIGHT - self.rect.height
+
     def jump(self):
 
         self.rect.y += 2
@@ -51,16 +60,16 @@ class Player(Actor):
             self.vel_y = -13
 
     def go_left(self):
-        self.change_x = -6
+        self.vel_x = -6
 
     def go_left_fast(self):
-        self.change_x = -12
+        self.vel_x = -12
 
     def go_right(self):
-        self.change_x = 6
+        self.vel_x = 6
     
     def go_right_fast(self):
-        self.change_x = 12
+        self.vel_x = 12
 
     def stop(self):
         self.vel_x = 0
