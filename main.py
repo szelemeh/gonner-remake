@@ -207,10 +207,15 @@ class Game:
             diff = 500 - self.player.rect.left  # shift the world walk
             self.player.rect.left = 500
             self.shift_world(diff)
+ 
+        # current_position = self.player.rect.x + self.world_shift
 
-        # if abs((self.right_wall.rect.x - self.right_wall.rect.width / 2) - (self.player.rect.x + self.player.rect.width / 2)) == self.player.rect.width:
+        # if abs((self.right_wall.rect.x - self.right_wall.rect.width / 2) - (
+        #         self.player.rect.x + self.player.rect.width / 2)) == self.player.rect.width:
         #     self.go_to_store()
-        if self.right_wall.rect.left == self.player.rect.right:
+
+        if abs((self.right_wall.rect.x - self.right_wall.rect.width / 2) - (
+                self.player.rect.x + self.player.rect.width / 2)) <= 25:
             self.go_to_store()
 
     def draw(self):
