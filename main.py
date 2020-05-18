@@ -148,6 +148,14 @@ class Game:
                 counter -= 1
                 if counter == 0:
                     counter = 1000000
+            
+            counter_ghost = 1000000
+            if isinstance(enemy, Ghost) and abs(enemy.rect.x - self.player.rect.x) <= self.player.rect.width / 2 and abs(enemy.rect.y - self.player.rect.y) <= self.player.rect.height / 2:
+                if counter_ghost == 1000000:
+                    self.player.hp -= 1
+                counter_ghost -= 1
+                if counter_ghost == 0:
+                    counter_ghost = 1000000
 
         if self.player.hp <= 0:
             self.player.kill()
@@ -157,10 +165,10 @@ class Game:
             if abs(
                     gold.rect.x - self.player.rect.x) <= self.player.rect.width / 2 and self.player.rect.bottom == gold.rect.bottom:
                 gold.kill()
-                self.player.money += 10
+                self.player.money += 100
 
         self.all_sprites.update()
-        print(self.player.vel_y)
+        #print(self.player.vel_y)
 
     def events(self):
         have_jumped = False
@@ -221,12 +229,13 @@ class Game:
     def draw(self):
         self.screen.fill(RED)
         stats = "HP: " + str(self.player.hp) + ", money: " + str(self.player.money)
+        features = "You've got double speed!"
         self.draw_text(stats, 20, WHITE, 80, 20)
+        self.draw_text(features, 20, WHITE, 120, 40)
         self.all_sprites.draw(self.screen)
         pg.display.flip()
 
     def show_start_screen(self):
-        print("Start")
         self.screen.fill(RED)
         self.draw_text(TITLE, 48, WHITE, WIDTH / 2, HEIGHT / 4)
         self.draw_text("Use arrows to move and jump", 22, WHITE, WIDTH / 2, HEIGHT / 2)
@@ -235,7 +244,6 @@ class Game:
         self.wait_for_key()
 
     def show_go_screen(self):
-        print("End")
         if not self.running:
             return
         self.screen.fill(RED)
@@ -244,10 +252,9 @@ class Game:
         self.wait_for_key()
 
     def go_to_store(self):
-        print("is in store")
         self.screen.fill(RED)
         self.draw_text("Store", 48, WHITE, WIDTH / 2, HEIGHT / 4)
-        self.draw_text("Things you can buy: ", 22, WHITE, WIDTH / 2, HEIGHT / 2)
+        self.draw_text("Things you can buy: Extra speed: 50g    Extra defense: 50g", 22, WHITE, WIDTH / 2, HEIGHT / 2)
         self.draw_text("Press Enter to exit store", 22, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
         pg.display.flip()
         waiting = True
@@ -256,7 +263,6 @@ class Game:
             for event in pg.event.get():
                 if (event.type == pg.KEYDOWN) and (event.key == pg.K_RETURN):
                     waiting = False
-                    print("Enter pressed")
                 if event.type == pg.QUIT:
                     waiting = False
                     self.playing = False
