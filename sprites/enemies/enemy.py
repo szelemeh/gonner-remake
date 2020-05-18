@@ -1,17 +1,14 @@
 from math import sqrt
 from random import randint
 from enum import Enum
+
+from game.physics_helper import get_distance_between
 from sprites.actor import Actor
 
 
 def get_rand_member_of(members):
     i = randint(0, len(members) - 1)
     return members[i]
-
-
-def get_distance_between(x1, y1, x2, y2):
-    distance = sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
-    return distance
 
 
 class Enemy(Actor):

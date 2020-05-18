@@ -2,9 +2,8 @@ from sprites.enemies.ground_enemies.ground_enemy import GroundEnemy
 
 
 class Slime(GroundEnemy):
-    def __init__(self, x, y, width, height, images_left, images_right, target):
-        super().__init__(x, y, width, height, images_left, images_right, target)
-
+    def __init__(self, x, y, width, height, slime_animation, target):
+        super().__init__(x, y, width, height, slime_animation, target)
         self.vel_x = 1
 
     def move(self):

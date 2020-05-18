@@ -30,6 +30,8 @@ class SpriteAnimation:
         self.idle_right = None
         self.jump_left = None
         self.jump_right = None
+        self.hurt_left = None
+        self.hurt_right = None
 
     def add_move(self, images):
         self.move_left = convert_to_pg_image(mirror(images))
@@ -42,6 +44,10 @@ class SpriteAnimation:
     def add_idle(self, images):
         self.idle_left = convert_to_pg_image(mirror(images))
         self.idle_right = convert_to_pg_image(images)
+
+    def add_hurt(self, images):
+        self.hurt_left = convert_to_pg_image(mirror(images))
+        self.hurt_right = convert_to_pg_image(images)
 
     def set_state(self, entity_state):
         if entity_state == ActorState.IDLE:
@@ -67,6 +73,11 @@ class SpriteAnimation:
                 self.current_images = self.jump_left
             else:
                 self.current_images = self.jump_right
+        elif entity_state == ActorState.HURT:
+            if self.current_images in [self.move_left, self.jump_left, self.idle_left]:
+                self.current_images = self.hurt_left
+            else:
+                self.current_images = self.hurt_right
 
     def update(self):
         if self.image_change_countdown == 0:

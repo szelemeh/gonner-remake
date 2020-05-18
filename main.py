@@ -6,16 +6,18 @@ import pygame as pg
 from game.settings import *
 from sprites.enemies.air_enemies.ghost import Ghost
 from sprites.enemies.enemy import EnemyType
+from sprites.enemies.ground_enemies.slime_block import SlimeBlock
 from sprites.enemies.ground_enemies.worm import Worm
 from sprites.player.gold import Gold
 from sprites.player.player import Player
 from sprites.world.platform import Platform
 from sprites.world.tile import Tile
-from sprites.sprite_animation import SpriteAnimation
+from sprites.sprite_animation import SpriteAnimation, ActorState
 
 
 def create_player(x, y) -> Player:
     animation = SpriteAnimation()
+    animation.add_hurt(get_images("img/player/p1_hurt.png"))
     animation.add_idle(get_images("img/player/p1_stand.png"))
     animation.add_move(get_images("img/player/walk/*"))
     animation.add_jump(get_images("img/player/p1_jump.png"))
@@ -94,6 +96,8 @@ class Game:
             self.add_enemy(create_enemy(EnemyType.SLIME, WIDTH - 50, HEIGHT - 50, self.player))
             self.add_enemy(create_enemy(EnemyType.GHOST, WIDTH - 50, HEIGHT / 2, self.player))
 
+        self.add_enemy(SlimeBlock(-500, HEIGHT/2, 150, 150, None, self.player))
+
         self.right_wall = Platform(WIDTH * 4, 0, 120, HEIGHT)
         self.platform_list.add(self.right_wall)
         self.all_sprites.add(self.right_wall)
@@ -140,22 +144,20 @@ class Game:
     def update(self):
 
         for enemy in self.enemy_list:
-            counter = 1000000
-            if abs(
-                    enemy.rect.x - self.player.rect.x) <= self.player.rect.width / 2 and self.player.rect.bottom == enemy.rect.bottom:
-                if counter == 1000000:
-                    self.player.hp -= 1
-                counter -= 1
-                if counter == 0:
-                    counter = 1000000
+            # counter = 1000000
+            if abs(enemy.rect.x - self.player.rect.x) <= self.player.rect.width / 2 and self.player.rect.bottom == enemy.rect.bottom:
+                # if counter == 1000000:
+                self.player.hp -= 1
+                # counter -= 1
+                # if counter == 0:
+                #     counter = 1000000
 
         if self.player.hp <= 0:
             self.player.kill()
             self.playing = False
 
         for gold in self.gold:
-            if abs(
-                    gold.rect.x - self.player.rect.x) <= self.player.rect.width / 2 and self.player.rect.bottom == gold.rect.bottom:
+            if abs(gold.rect.x - self.player.rect.x) <= self.player.rect.width / 2 and self.player.rect.bottom == gold.rect.bottom:
                 gold.kill()
                 self.player.money += 10
 
@@ -182,7 +184,7 @@ class Game:
                     else:
                         self.player.go_right()
                 if event.key == pg.K_LSHIFT:
-                    if self.double_speed == False:
+                    if not self.double_speed:
                         self.double_speed = True
                     else:
                         self.double_speed = False

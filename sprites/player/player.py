@@ -11,12 +11,12 @@ class Player(Actor):
 
         self.collide_list = pg.sprite.Group()
 
-        self.hp = 50
+        self.hp = PLAYER_MAX_HP
         self.money = 0
 
     def update(self):
 
-        self.calc_grav()
+        self.apply_gravity()
 
         self.rect.x += self.vel_x
 
@@ -42,14 +42,6 @@ class Player(Actor):
             self.vel_y = 0
 
         Actor.update(self)
-
-    def calc_grav(self):
-
-        self.vel_y += .35
-
-        if self.rect.y >= HEIGHT - self.rect.height and self.vel_y >= 0:
-            self.vel_y = 0
-            self.rect.y = HEIGHT - self.rect.height
 
     def jump(self):
 

@@ -55,3 +55,4 @@ class ActorState(Enum):
     JUMPING_LEFT = -3
     JUMPING_RIGHT = 3
     JUMPING_IN_PLACE = 4
+    HURT = 5
