@@ -112,3 +112,13 @@ class Creator(metaclass=CreatorMeta):
         self.bullets.add(created_bullet)
         self.all_sprites.add(created_bullet)
         return created_bullet
+
+    def empty_all_objects(self):
+        self.all_sprites.empty()
+        self.platforms.empty()
+        self.tiles.empty()
+        self.enemies.empty()
+        self.coins.empty()
+        self.bullets.empty()
+        self.player_collide_list.empty()
+        self.shiftable.empty()
