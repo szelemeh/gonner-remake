@@ -16,4 +16,4 @@ class GroundEnemy(Enemy):
         Enemy.apply_gravity(self)
         self.rect.x += self.vel_x
         self.rect.y += self.vel_y
-        Actor.update(self)
+        Enemy.update(self)

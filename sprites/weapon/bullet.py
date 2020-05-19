@@ -7,7 +7,7 @@ class Bullet(Actor):
         super().__init__(x, y, 20, 10, animation)
         self.velocity = 2
         self.reach_length = 1000
-        self.damage = 5
+        self.damage = 1
 
         self.flying = False
         self.target = None
@@ -28,8 +28,7 @@ class Bullet(Actor):
 
     def update(self):
         if self.flying_length > self.reach_length:
-            self.flying = False
-            self.vel_x *= 0.9
+            self.kill()
 
         if self.flying:
             self.__next_step()

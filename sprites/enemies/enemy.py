@@ -16,6 +16,7 @@ class Enemy(Actor):
     def __init__(self, x, y, width, height, animation, target):
         super().__init__(x, y, width, height, animation)
         self.target = target
+        self.hp = 10
 
     def get_target_distance(self):
         t_x = self.target.rect.x
@@ -23,6 +24,11 @@ class Enemy(Actor):
         s_x = self.rect.x
         s_y = self.rect.y
         return get_distance_between(t_x, t_y, s_x, s_y)
+
+    def update(self):
+        if self.hp <= 0:
+            self.kill()
+        Actor.update(self)
 
 
 class EnemyType(Enum):

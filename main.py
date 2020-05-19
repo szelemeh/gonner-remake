@@ -102,7 +102,12 @@ class Game:
 
         pg.sprite.groupcollide(self.bullet_list, self.platform_list, True, False)
         pg.sprite.groupcollide(self.bullet_list, self.tile_list, True, False)
-        pg.sprite.groupcollide(self.bullet_list, self.enemy_list, True, True)
+
+        collision_dict = pg.sprite.groupcollide(self.bullet_list, self.enemy_list, True, False)
+        for bullet in collision_dict:
+            for enemy in collision_dict[bullet]:
+                enemy.hp -= bullet.damage
+
 
         self.all_sprites.update()
         self.camera.update()
