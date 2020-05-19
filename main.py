@@ -1,56 +1,13 @@
-from glob import glob
 from random import randint
 
 import pygame as pg
-from PIL import Image
 
-from game.settings import *
+from creator import Creator
+from game.camera import Camera
 from game.navigation import Navigator
+from game.settings import *
 from sprites.enemies.air_enemies.ghost import Ghost
 from sprites.enemies.enemy import EnemyType
-from sprites.enemies.ground_enemies.slime_block import SlimeBlock
-from sprites.enemies.ground_enemies.worm import Worm
-from sprites.player.gold import Gold
-from sprites.player.player import Player
-from sprites.sprite_animation import SpriteAnimation
-from sprites.world.platform import Platform
-from sprites.world.tile import Tile
-
-
-def create_player(x, y) -> Player:
-    animation = SpriteAnimation()
-    animation.add_hurt(get_images("img/player/p1_hurt.png"))
-    animation.add_idle(get_images("img/player/p1_stand.png"))
-    animation.add_move(get_images("img/player/walk/*"))
-    animation.add_jump(get_images("img/player/p1_jump.png"))
-    return Player(x, y, animation)
-
-
-def create_enemy(enemy_type, x, y, target):
-    if enemy_type == EnemyType.GHOST:
-        animation = SpriteAnimation()
-        animation.add_idle(get_images("img/ghost/ghost_normal.png"))
-        animation.add_move(get_images("img/ghost/ghost.png"))
-        return Ghost(x, y, 51, 73, animation, target)
-
-    elif enemy_type == EnemyType.SLIME:
-        animation = SpriteAnimation()
-        animation.add_idle(get_images("img/slime/walk/slime_walk1.png"))
-        animation.add_move(get_images("img/slime/walk/*"))
-        return Worm(x, y, 63, 23, animation, target)
-    elif enemy_type == EnemyType.WORM:
-        animation = SpriteAnimation()
-        animation.add_idle(get_images("img/worm/walk/worm.png"))
-        animation.add_move(get_images("img/worm/walk/*"))
-        return Worm(x, y, 63, 23, animation, target)
-
-
-def create_gold(x, y):
-    return Gold(x, y, Image.open("img/gold/gold_0.png"))
-
-
-def get_images(path):
-    return [Image.open(img) for img in glob(path)]
 
 
 class Game:
@@ -61,78 +18,58 @@ class Game:
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         self.running = True
-        self.world_shift = 0
         self.can_jump = True
         self.double_speed = False
-        self.navigator = Navigator()
 
-    def create_wall(self, x, y, n):
-        for i in range(n):
-            for j in range(n):
-                tile = Tile(x + i * TILE_SIZE, y + j * TILE_SIZE)
-                self.all_sprites.add(tile)
-                self.tiles_list.add(tile)
-                self.player.collide_list.add(tile)
+        self.navigator = Navigator()
 
     def add_enemy(self, enemy):
         self.all_sprites.add(enemy)
         self.enemy_list.add(enemy)
 
     def new(self):
-        self.all_sprites = pg.sprite.Group()
-        self.player_sprite = pg.sprite.Group()
-        self.platform_list = pg.sprite.Group()
-        self.tiles_list = pg.sprite.Group()
-        self.enemy_list = pg.sprite.Group()
+        creator = Creator()
+        creator.create_gold(WIDTH / 2, HEIGHT / 2)
 
         self.gold = pg.sprite.Group()
 
-        money = create_gold(WIDTH / 2, HEIGHT / 2)
-        self.gold.add(money)
-        self.all_sprites.add(money)
-        self.player = create_player(WIDTH / 3, HEIGHT / 2)
-        self.all_sprites.add(self.player)
+        self.player = creator.create_player(WIDTH / 3, HEIGHT / 2)
 
         for i in range(1, 5):
-            self.add_enemy(create_enemy(EnemyType.WORM, WIDTH / 3, HEIGHT / 2, self.player))
-            self.add_enemy(create_enemy(EnemyType.SLIME, WIDTH - 50, HEIGHT - 50, self.player))
-            self.add_enemy(create_enemy(EnemyType.GHOST, WIDTH - 50, HEIGHT / 2, self.player))
+            creator.create_enemy(EnemyType.WORM, WIDTH / 3, HEIGHT / 2, self.player)
+            creator.create_enemy(EnemyType.SLIME, WIDTH - 50, HEIGHT - 50, self.player)
+            creator.create_enemy(EnemyType.GHOST, WIDTH - 50, HEIGHT / 2, self.player)
 
-        self.add_enemy(SlimeBlock(-500, HEIGHT / 2, 150, 150, None, self.player))
+        creator.create_enemy(EnemyType.SLIME_BLOCK, -500, HEIGHT / 2, self.player)
 
-        self.right_wall = Platform(WIDTH * 4, 0, 120, HEIGHT)
-        self.platform_list.add(self.right_wall)
-        self.all_sprites.add(self.right_wall)
-        self.player.collide_list.add(self.right_wall)
+        self.right_wall = creator.create_platform(WIDTH * 4, 0, 120, HEIGHT)
 
-        p2 = Platform(WIDTH / 2 - 400, 100, 200, 20)
-        p3 = Platform(WIDTH / 2 - 200, HEIGHT * 9 / 10, 100, 20)
-        self.platform_list.add(p2)
-        self.platform_list.add(p3)
+        creator.create_platform(WIDTH / 2 - 400, 100, 200, 20)
+        creator.create_platform(WIDTH / 2 - 200, HEIGHT * 9 / 10, 100, 20)
 
-        self.all_sprites.add(p2)
-        self.all_sprites.add(p3)
-
-        self.player.collide_list.add(p2)
-        self.player.collide_list.add(p3)
-
-        self.create_wall(room[0][8][0], room[0][8][1] + TILE_SIZE * 2, 2)
+        creator.create_wall(room[0][8][0], room[0][8][1] + TILE_SIZE * 2, 2)
 
         for i in range(3):
             random = randint(3 * i, 3 * i + 2)
             n = randint(1, 4)
-            self.create_wall(room[1][random][0], room[1][random][1], n)
+            creator.create_wall(room[1][random][0], room[1][random][1], n)
 
         for i in range(3):
             random = randint(3 * i, 3 * i + 2)
             n = randint(1, 4)
-            self.create_wall(room[2][random][0], room[2][random][1], n)
+            creator.create_wall(room[2][random][0], room[2][random][1], n)
 
         for i in range(3):
             random = randint(3 * i, 3 * i + 2)
             n = randint(1, 4)
-            self.create_wall(room[3][random][0], room[3][random][1], n)
+            creator.create_wall(room[3][random][0], room[3][random][1], n)
 
+        self.all_sprites = creator.all_sprites
+        self.platform_list = creator.platforms
+        self.tiles_list = creator.tiles
+        self.enemy_list = creator.enemies
+        self.player.collide_list = creator.player_collide_list
+        self.camera = Camera(self.player, creator.shiftable)
         self.run()
 
     def run(self):
@@ -176,6 +113,7 @@ class Game:
                 self.player.money += 100
 
         self.all_sprites.update()
+        self.camera.update()
         # print(self.player.vel_y)
 
     def events(self):
@@ -214,16 +152,6 @@ class Game:
 
         self.all_sprites.update()
 
-        if self.player.rect.right >= 500:
-            diff = self.player.rect.right - 500  # shift the world left
-            self.player.rect.right = 500
-            self.shift_world(-diff)
-
-        if self.player.rect.left <= 500:
-            diff = 500 - self.player.rect.left  # shift the world walk
-            self.player.rect.left = 500
-            self.shift_world(diff)
-
         if abs((self.right_wall.rect.x - self.right_wall.rect.width / 2) - (
                 self.player.rect.x + self.player.rect.width / 2)) <= 25:
             self.navigator.go_to_store()
@@ -241,21 +169,6 @@ class Game:
         self.draw_stats_bar()
         self.all_sprites.draw(self.screen)
         pg.display.flip()
-
-    def shift_world(self, shift_x):
-        self.world_shift += shift_x
-
-        for platform in self.platform_list:
-            platform.rect.x += shift_x
-
-        for tile in self.tiles_list:
-            tile.rect.x += shift_x
-
-        for enemy in self.enemy_list:
-            enemy.rect.x += shift_x
-
-        for gold in self.gold:
-            gold.rect.x += shift_x
 
 
 g = Game()

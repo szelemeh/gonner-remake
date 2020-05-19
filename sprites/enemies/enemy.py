@@ -31,3 +31,5 @@ class EnemyType(Enum):
     # Ground enemies
     WORM = 2,
     SLIME = 3
+    # Bosses
+    SLIME_BLOCK = 4

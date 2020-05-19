@@ -3,7 +3,7 @@ from game.settings import *
 from sprites.actor import Actor
 
 
-class Gold(Actor):
+class Coin(Actor):
     def __init__(self, x, y, image):
         super().__init__(x, y, 15, 15)
         self.rect = pg.Surface((15, 15)).get_rect()

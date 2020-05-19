@@ -94,8 +94,10 @@ class Navigator(metaclass=NavigatorMeta):
 
                 if (event.type == pg.KEYDOWN) and (event.key == pg.K_RETURN):
                     waiting = False
-                    #self.show_go_screen()
-                    #self.go_to_next_level()
+                    # self.go_to_next_level()
                 if event.type == pg.QUIT:
                     waiting = False
                     self.game.playing = False
+
+    def go_to_next_level(self):
+        pass
