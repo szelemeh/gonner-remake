@@ -1,18 +1,20 @@
 from glob import glob
 from random import randint
-from PIL import Image
+
 import pygame as pg
+from PIL import Image
 
 from game.settings import *
+from game.navigation import Navigator
 from sprites.enemies.air_enemies.ghost import Ghost
 from sprites.enemies.enemy import EnemyType
 from sprites.enemies.ground_enemies.slime_block import SlimeBlock
 from sprites.enemies.ground_enemies.worm import Worm
 from sprites.player.gold import Gold
 from sprites.player.player import Player
+from sprites.sprite_animation import SpriteAnimation
 from sprites.world.platform import Platform
 from sprites.world.tile import Tile
-from sprites.sprite_animation import SpriteAnimation, ActorState
 
 
 def create_player(x, y) -> Player:
@@ -62,7 +64,7 @@ class Game:
         self.world_shift = 0
         self.can_jump = True
         self.double_speed = False
-        self.font_name = pg.font.match_font(FONT_NAME)
+        self.navigator = Navigator()
 
     def create_wall(self, x, y, n):
         for i in range(n):
@@ -156,7 +158,7 @@ class Game:
             counter_ghost = 1000000
             if isinstance(enemy, Ghost) and abs(
                     enemy.rect.x - self.player.rect.x) <= self.player.rect.width / 2 and abs(
-                    enemy.rect.y - self.player.rect.y) <= self.player.rect.height / 2:
+                enemy.rect.y - self.player.rect.y) <= self.player.rect.height / 2:
                 if counter_ghost == 1000000:
                     self.player.hp -= 1
                 counter_ghost -= 1
@@ -224,79 +226,21 @@ class Game:
 
         if abs((self.right_wall.rect.x - self.right_wall.rect.width / 2) - (
                 self.player.rect.x + self.player.rect.width / 2)) <= 25:
-            self.go_to_store()
+            self.navigator.go_to_store()
 
-    def draw_info(self):
+    def draw_stats_bar(self):
         stats = "HP: " + str(self.player.hp) + ", money: " + str(self.player.money)
-        self.draw_text(stats, 20, WHITE, 80, 20)
+        self.navigator.draw_text(stats, 20, WHITE, 80, 20)
 
         if self.player.got_double_speed:
             features = "You've got double speed!"
-            self.draw_text(features, 20, WHITE, 120, 40)
+            self.navigator.draw_text(features, 20, WHITE, 120, 40)
 
     def draw(self):
         self.screen.fill(RED)
-        self.draw_info()
+        self.draw_stats_bar()
         self.all_sprites.draw(self.screen)
         pg.display.flip()
-
-    def show_start_screen(self):
-        self.screen.fill(RED)
-        self.draw_text(TITLE, 48, WHITE, WIDTH / 2, HEIGHT / 4)
-        self.draw_text("Use arrows to move and jump", 22, WHITE, WIDTH / 2, HEIGHT / 2)
-        self.draw_text("Press a key to play", 22, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
-        pg.display.flip()
-        self.wait_for_key()
-
-    def show_go_screen(self):
-        if not self.running:
-            return
-        self.screen.fill(RED)
-        self.draw_text("GAME OVER", 48, WHITE, WIDTH / 2, HEIGHT / 4)
-        pg.display.flip()
-        self.wait_for_key()
-
-    def go_to_store(self):
-        self.screen.fill(RED)
-        self.draw_info()
-        self.draw_text("Store", 48, WHITE, WIDTH / 2, HEIGHT / 4)
-        self.draw_text("Things you can buy: (1) Extra speed: 50g    (2) Extra HP: 50g", 22, WHITE, WIDTH / 2, HEIGHT / 2)
-        self.draw_text("Press Enter to exit store", 22, WHITE, WIDTH / 2, HEIGHT * 5 / 6)
-        pg.display.flip()
-        waiting = True
-        while waiting:
-            self.playing = False
-            for event in pg.event.get():
-                if event.type == pg.KEYDOWN and event.key == pg.K_1:
-                    if self.player.money >= 50:
-                        print("bought speed")
-                        self.player.got_double_speed = True
-                        self.player.money -= 50
-                        self.screen.fill(RED, (0, 0, 200, 200))
-                        self.draw_info()
-                        pg.display.flip()
-                    else:
-                        self.draw_text("Not enough money", 20, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
-                        pg.display.flip()
-
-                if event.type == pg.KEYDOWN and event.key == pg.K_2:
-                    if self.player.money >= 50:
-                        print("bought hp")
-                        self.player.hp += 500
-                        self.player.money -= 50
-                        self.screen.fill(RED, (0, 0, 200, 200))
-                        self.draw_info()
-                        pg.display.flip()
-                    else:
-                        self.draw_text("Not enough money", 20, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
-                        pg.display.flip()
-
-                if (event.type == pg.KEYDOWN) and (event.key == pg.K_RETURN):
-                    waiting = False
-                    self.go_to_next_level()
-                if event.type == pg.QUIT:
-                    waiting = False
-                    self.playing = False
 
     def shift_world(self, shift_x):
         self.world_shift += shift_x
@@ -313,29 +257,13 @@ class Game:
         for gold in self.gold:
             gold.rect.x += shift_x
 
-    def wait_for_key(self):
-        waiting = True
-        while waiting:
-            self.clock.tick(FPS)
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    waiting = False
-                    self.running = False
-                if event.type == pg.KEYUP:
-                    waiting = False
-
-    def draw_text(self, text, size, color, x, y):
-        font = pg.font.Font(self.font_name, size)
-        text_surface = font.render(text, True, color)
-        text_rect = text_surface.get_rect()
-        text_rect.midtop = (x, y)
-        self.screen.blit(text_surface, text_rect)
-
 
 g = Game()
-g.show_start_screen()
+nav = Navigator()
+nav.set_game(g)
+nav.show_start_screen()
 while g.running:
     g.new()
-    g.show_go_screen()
+    nav.show_go_screen()
 
 pg.quit()
