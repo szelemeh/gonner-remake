@@ -77,7 +77,16 @@ class Game:
         self.all_sprites.add(self.player)
 
         self.right_wall = self.creator.create_platform(WIDTH * 4, 0, 120, HEIGHT)
+        self.map = []
+        with open('map_2.txt', 'r') as f:
+            for line in f:
+                self.map.append(line)
 
+        for row, tiles in enumerate(self.map):
+            for col, tile in enumerate(tiles):
+                if tile == '1':
+                    self.creator.create_wall(col * TILE_SIZE, row * TILE_SIZE, 1)
+                    print("created tile")
 
     def build_level_03(self):
 
