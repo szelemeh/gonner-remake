@@ -6,8 +6,10 @@ from creator import Creator
 from game.camera import Camera
 from game.navigation import Navigator
 from game.settings import *
+from sprites.enemies.air_enemies.air_enemy import AirEnemy
 from sprites.enemies.air_enemies.ghost import Ghost
 from sprites.enemies.enemy import EnemyType
+from sprites.weapon import Weapon
 
 
 class Game:
@@ -34,13 +36,14 @@ class Game:
         self.gold = pg.sprite.Group()
 
         self.player = creator.create_player(WIDTH / 3, HEIGHT / 2)
+        self.player.weapon = Weapon(creator)
 
         for i in range(1, 5):
             creator.create_enemy(EnemyType.WORM, WIDTH / 3, HEIGHT / 2, self.player)
             creator.create_enemy(EnemyType.SLIME, WIDTH - 50, HEIGHT - 50, self.player)
             creator.create_enemy(EnemyType.GHOST, WIDTH - 50, HEIGHT / 2, self.player)
 
-        creator.create_enemy(EnemyType.SLIME_BLOCK, -500, HEIGHT / 2, self.player)
+        # creator.create_enemy(EnemyType.SLIME_BLOCK, -500, HEIGHT / 2, self.player)
 
         self.right_wall = creator.create_platform(WIDTH * 4, 0, 120, HEIGHT)
 
@@ -70,6 +73,7 @@ class Game:
         self.enemy_list = creator.enemies
         self.player.collide_list = creator.player_collide_list
         self.camera = Camera(self.player, creator.shiftable)
+        self.bullet_list = creator.bullets
         self.run()
 
     def run(self):
@@ -93,7 +97,7 @@ class Game:
                     counter = 1000000
 
             counter_ghost = 1000000
-            if isinstance(enemy, Ghost) and abs(
+            if isinstance(enemy, AirEnemy) and abs(
                     enemy.rect.x - self.player.rect.x) <= self.player.rect.width / 2 and abs(
                 enemy.rect.y - self.player.rect.y) <= self.player.rect.height / 2:
                 if counter_ghost == 1000000:
@@ -114,7 +118,6 @@ class Game:
 
         self.all_sprites.update()
         self.camera.update()
-        # print(self.player.vel_y)
 
     def events(self):
         have_jumped = False
@@ -125,6 +128,9 @@ class Game:
                 self.running = False
 
             if event.type == pg.KEYDOWN:
+                if event.key == pg.K_SPACE:
+                    self.player.fire()
+
                 if event.key == pg.K_LEFT:
                     if self.double_speed:
                         self.player.go_left_fast()

@@ -1,7 +1,12 @@
+from __future__ import annotations
+
 from glob import glob
+from typing import Optional
+
 from PIL import Image
 import pygame as pg
 from game.settings import *
+from sprites.bullet import Bullet
 from sprites.enemies.air_enemies.ghost import Ghost
 from sprites.enemies.enemy import EnemyType
 from sprites.enemies.ground_enemies.slime_block import SlimeBlock
@@ -17,13 +22,23 @@ def get_images(path):
     return [Image.open(img) for img in glob(path)]
 
 
-class Creator:
+class CreatorMeta(type):
+    _instance: Optional[Creator] = None
+
+    def __call__(cls) -> Creator:
+        if cls._instance is None:
+            cls._instance = super().__call__()
+        return cls._instance
+
+
+class Creator(metaclass=CreatorMeta):
     def __init__(self):
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
         self.tiles = pg.sprite.Group()
         self.enemies = pg.sprite.Group()
         self.coins = pg.sprite.Group()
+        self.bullets = pg.sprite.Group()
         self.player_collide_list = pg.sprite.Group()
         self.shiftable = pg.sprite.Group()
 
@@ -90,3 +105,9 @@ class Creator:
         created_player = Player(x, y, animation)
         self.all_sprites.add(created_player)
         return created_player
+
+    def create_bullet(self, x, y):
+        created_bullet = Bullet(x, y, None)
+        self.shiftable.add(created_bullet)
+        self.all_sprites.add(created_bullet)
+        return created_bullet

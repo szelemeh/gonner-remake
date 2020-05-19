@@ -2,6 +2,7 @@ from game.settings import *
 import pygame as pg
 
 from sprites.actor import Actor
+from sprites.weapon import Weapon
 
 
 class Player(Actor):
@@ -14,6 +15,15 @@ class Player(Actor):
         self.hp = PLAYER_MAX_HP
         self.money = 0
         self.got_double_speed = False
+
+        self.weapon = None
+
+    def fire(self):
+        if self.weapon is not None:
+            self.weapon.fire_from_at_direction(
+                self.rect.x,
+                self.rect.y + 47,
+                self.animation.get_direction())
 
     def update(self):
 

@@ -3,6 +3,7 @@ from typing import Optional
 from PIL import ImageOps
 
 from sprites.actor import *
+from sprites.direction import Direction
 
 
 def mirror(pil_images):
@@ -62,13 +63,13 @@ class SpriteAnimation:
         elif entity_state == ActorState.MOVING_RIGHT:
             self.current_images = self.move_right
 
-        elif entity_state == ActorState.JUMPING_LEFT:
+        elif entity_state == ActorState.FLYING_LEFT:
             self.current_images = self.jump_left
 
-        elif entity_state == ActorState.JUMPING_RIGHT:
+        elif entity_state == ActorState.FLYING_RIGHT:
             self.current_images = self.jump_right
 
-        elif entity_state == ActorState.JUMPING_IN_PLACE:
+        elif entity_state == ActorState.FLYING_IN_PLACE:
             if self.current_images in [self.move_left, self.jump_left, self.idle_left]:
                 self.current_images = self.jump_left
             else:
@@ -78,6 +79,12 @@ class SpriteAnimation:
                 self.current_images = self.hurt_left
             else:
                 self.current_images = self.hurt_right
+
+    def get_direction(self) -> Direction:
+        if self.current_images in [self.move_left, self.jump_left, self.idle_left]:
+            return Direction.WEST
+        else:
+            return Direction.EAST
 
     def update(self):
         if self.image_change_countdown == 0:

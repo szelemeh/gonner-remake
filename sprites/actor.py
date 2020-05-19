@@ -1,5 +1,7 @@
 import pygame as pg
 from enum import Enum
+
+from game.physics_helper import is_calm_with_such_vel_y
 from game.settings import *
 
 
@@ -30,13 +32,13 @@ class Actor(pg.sprite.Sprite):
     def get_state(self):
         if self.vel_x == 0 and self.vel_y < 2.1*GRAVITY:
             return ActorState.IDLE
-        if self.vel_y > 2.1*GRAVITY or self.vel_y < 0:
+        if is_calm_with_such_vel_y(self.vel_y):
             if self.vel_x == 0:
-                return ActorState.JUMPING_IN_PLACE
+                return ActorState.FLYING_IN_PLACE
             if self.vel_x > 0:
-                return ActorState.JUMPING_RIGHT
+                return ActorState.FLYING_RIGHT
             else:
-                return ActorState.JUMPING_LEFT
+                return ActorState.FLYING_LEFT
         if self.vel_x > 0:
             return ActorState.MOVING_RIGHT
         else:
@@ -52,7 +54,7 @@ class ActorState(Enum):
     IDLE = 0
     MOVING_LEFT = -2
     MOVING_RIGHT = 2
-    JUMPING_LEFT = -3
-    JUMPING_RIGHT = 3
-    JUMPING_IN_PLACE = 4
+    FLYING_LEFT = -3
+    FLYING_RIGHT = 3
+    FLYING_IN_PLACE = 4
     HURT = 5
