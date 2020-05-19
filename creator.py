@@ -6,7 +6,7 @@ from typing import Optional
 from PIL import Image
 import pygame as pg
 from game.settings import *
-from sprites.bullet import Bullet
+from sprites.weapon.bullet import Bullet
 from sprites.enemies.air_enemies.ghost import Ghost
 from sprites.enemies.enemy import EnemyType
 from sprites.enemies.ground_enemies.slime_block import SlimeBlock
@@ -109,5 +109,6 @@ class Creator(metaclass=CreatorMeta):
     def create_bullet(self, x, y):
         created_bullet = Bullet(x, y, None)
         self.shiftable.add(created_bullet)
+        self.bullets.add(created_bullet)
         self.all_sprites.add(created_bullet)
         return created_bullet

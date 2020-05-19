@@ -1,4 +1,4 @@
-from sprites.direction import Direction
+from sprites.weapon.direction import Direction
 
 
 class Weapon:

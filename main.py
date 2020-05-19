@@ -7,9 +7,8 @@ from game.camera import Camera
 from game.navigation import Navigator
 from game.settings import *
 from sprites.enemies.air_enemies.air_enemy import AirEnemy
-from sprites.enemies.air_enemies.ghost import Ghost
 from sprites.enemies.enemy import EnemyType
-from sprites.weapon import Weapon
+from sprites.weapon.weapon import Weapon
 
 
 class Game:
@@ -25,55 +24,52 @@ class Game:
 
         self.navigator = Navigator()
 
-    def add_enemy(self, enemy):
-        self.all_sprites.add(enemy)
-        self.enemy_list.add(enemy)
-
     def new(self):
-        creator = Creator()
-        creator.create_gold(WIDTH / 2, HEIGHT / 2)
+        self.creator = Creator()
+        self.creator.create_gold(WIDTH / 2, HEIGHT / 2)
 
         self.gold = pg.sprite.Group()
 
-        self.player = creator.create_player(WIDTH / 3, HEIGHT / 2)
-        self.player.weapon = Weapon(creator)
+        self.player = self.creator.create_player(WIDTH / 3, HEIGHT / 2)
+        self.player.weapon = Weapon(self.creator)
 
         for i in range(1, 5):
-            creator.create_enemy(EnemyType.WORM, WIDTH / 3, HEIGHT / 2, self.player)
-            creator.create_enemy(EnemyType.SLIME, WIDTH - 50, HEIGHT - 50, self.player)
-            creator.create_enemy(EnemyType.GHOST, WIDTH - 50, HEIGHT / 2, self.player)
+            self.creator.create_enemy(EnemyType.WORM, WIDTH / 3, HEIGHT / 2, self.player)
+            self.creator.create_enemy(EnemyType.SLIME, WIDTH - 50, HEIGHT - 50, self.player)
+            self.creator.create_enemy(EnemyType.GHOST, WIDTH - 50, HEIGHT / 2, self.player)
 
-        # creator.create_enemy(EnemyType.SLIME_BLOCK, -500, HEIGHT / 2, self.player)
+        # self.creator.create_enemy(EnemyType.SLIME_BLOCK, -500, HEIGHT / 2, self.player)
 
-        self.right_wall = creator.create_platform(WIDTH * 4, 0, 120, HEIGHT)
+        self.right_wall = self.creator.create_platform(WIDTH * 4, 0, 120, HEIGHT)
 
-        creator.create_platform(WIDTH / 2 - 400, 100, 200, 20)
-        creator.create_platform(WIDTH / 2 - 200, HEIGHT * 9 / 10, 100, 20)
+        self.creator.create_platform(WIDTH / 2 - 400, 100, 200, 20)
+        self.creator.create_platform(WIDTH / 2 - 200, HEIGHT * 9 / 10, 100, 20)
 
-        creator.create_wall(room[0][8][0], room[0][8][1] + TILE_SIZE * 2, 2)
-
-        for i in range(3):
-            random = randint(3 * i, 3 * i + 2)
-            n = randint(1, 4)
-            creator.create_wall(room[1][random][0], room[1][random][1], n)
+        self.creator.create_wall(room[0][8][0], room[0][8][1] + TILE_SIZE * 2, 2)
 
         for i in range(3):
             random = randint(3 * i, 3 * i + 2)
             n = randint(1, 4)
-            creator.create_wall(room[2][random][0], room[2][random][1], n)
+            self.creator.create_wall(room[1][random][0], room[1][random][1], n)
 
         for i in range(3):
             random = randint(3 * i, 3 * i + 2)
             n = randint(1, 4)
-            creator.create_wall(room[3][random][0], room[3][random][1], n)
+            self.creator.create_wall(room[2][random][0], room[2][random][1], n)
 
-        self.all_sprites = creator.all_sprites
-        self.platform_list = creator.platforms
-        self.tiles_list = creator.tiles
-        self.enemy_list = creator.enemies
-        self.player.collide_list = creator.player_collide_list
-        self.camera = Camera(self.player, creator.shiftable)
-        self.bullet_list = creator.bullets
+        for i in range(3):
+            random = randint(3 * i, 3 * i + 2)
+            n = randint(1, 4)
+            self.creator.create_wall(room[3][random][0], room[3][random][1], n)
+
+        self.all_sprites = self.creator.all_sprites
+        self.platform_list = self.creator.platforms
+        self.tile_list = self.creator.tiles
+        self.enemy_list = self.creator.enemies
+        self.coin_list = self.creator.coins
+        self.player.collide_list = self.creator.player_collide_list
+        self.camera = Camera(self.player, self.creator.shiftable)
+        self.bullet_list = self.creator.bullets
         self.run()
 
     def run(self):
@@ -86,35 +82,27 @@ class Game:
 
     def update(self):
 
-        for enemy in self.enemy_list:
-            counter = 1000000
-            if abs(
-                    enemy.rect.x - self.player.rect.x) <= self.player.rect.width / 2 and self.player.rect.bottom == enemy.rect.bottom:
-                if counter == 1000000:
-                    self.player.hp -= 1
-                counter -= 1
-                if counter == 0:
-                    counter = 1000000
-
-            counter_ghost = 1000000
-            if isinstance(enemy, AirEnemy) and abs(
-                    enemy.rect.x - self.player.rect.x) <= self.player.rect.width / 2 and abs(
-                enemy.rect.y - self.player.rect.y) <= self.player.rect.height / 2:
-                if counter_ghost == 1000000:
-                    self.player.hp -= 1
-                counter_ghost -= 1
-                if counter_ghost == 0:
-                    counter_ghost = 1000000
-
         if self.player.hp <= 0:
             self.player.kill()
             self.playing = False
 
-        for gold in self.gold:
-            if abs(
-                    gold.rect.x - self.player.rect.x) <= self.player.rect.width / 2 and self.player.rect.bottom == gold.rect.bottom:
-                gold.kill()
-                self.player.money += 100
+        for coin in pg.sprite.spritecollide(self.player, self.coin_list, False):
+            coin.kill()
+            self.player.money += 100
+
+        for enemy in pg.sprite.spritecollide(self.player, self.enemy_list, False):
+            if abs(enemy.rect.x - self.player.rect.x) <= self.player.rect.width / 2 \
+                    and self.player.rect.bottom == enemy.rect.bottom:
+                self.player.receive_damage(1)
+
+            if isinstance(enemy, AirEnemy) \
+                    and abs(enemy.rect.x - self.player.rect.x) <= self.player.rect.width / 2 \
+                    and abs(enemy.rect.y - self.player.rect.y) <= self.player.rect.height / 2:
+                self.player.receive_damage(1)
+
+        pg.sprite.groupcollide(self.bullet_list, self.platform_list, True, False)
+        pg.sprite.groupcollide(self.bullet_list, self.tile_list, True, False)
+        pg.sprite.groupcollide(self.bullet_list, self.enemy_list, True, True)
 
         self.all_sprites.update()
         self.camera.update()

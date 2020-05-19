@@ -2,7 +2,6 @@ from game.settings import *
 import pygame as pg
 
 from sprites.actor import Actor
-from sprites.weapon import Weapon
 
 
 class Player(Actor):
@@ -17,6 +16,8 @@ class Player(Actor):
         self.got_double_speed = False
 
         self.weapon = None
+
+        self.damage_countdown = 10
 
     def fire(self):
         if self.weapon is not None:
@@ -53,6 +54,12 @@ class Player(Actor):
             self.vel_y = 0
 
         Actor.update(self)
+
+    def receive_damage(self, amount):
+        if self.damage_countdown == 0:
+            self.hp -= amount
+            self.damage_countdown = 10
+        self.damage_countdown -= 1
 
     def jump(self):
 

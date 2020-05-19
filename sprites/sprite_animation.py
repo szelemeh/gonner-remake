@@ -1,9 +1,7 @@
-from typing import Optional
-
 from PIL import ImageOps
 
 from sprites.actor import *
-from sprites.direction import Direction
+from sprites.weapon.direction import Direction
 
 
 def mirror(pil_images):
