@@ -7,7 +7,6 @@ from typing import Optional
 
 
 class NavigatorMeta(type):
-
     _instance: Optional[Navigator] = None
 
     def __call__(cls) -> Navigator:
@@ -23,7 +22,7 @@ class Navigator(metaclass=NavigatorMeta):
     def set_game(self, game):
         self.game = game
 
-    def wait_for_key(self):
+    def wait_for_key(self, fun=None):
         waiting = True
         while waiting:
             self.game.clock.tick(FPS)
@@ -34,6 +33,8 @@ class Navigator(metaclass=NavigatorMeta):
                     pg.quit()
                 if event.type == pg.KEYUP:
                     waiting = False
+                    if fun is not None:
+                        fun()
 
     def draw_text(self, text, size, color, x, y):
         font = pg.font.Font(self.font_name, size)
@@ -56,13 +57,14 @@ class Navigator(metaclass=NavigatorMeta):
         self.game.screen.fill(RED)
         self.draw_text("GAME OVER", 48, WHITE, WIDTH / 2, HEIGHT / 4)
         pg.display.flip()
-        self.wait_for_key()
+        self.wait_for_key(lambda: self.game.stop())
 
     def go_to_store(self):
         self.game.screen.fill(RED)
         self.game.draw_stats_bar()
         self.draw_text("Store", 48, WHITE, WIDTH / 2, HEIGHT / 4)
-        self.draw_text("Things you can buy: (1) Extra speed: 50g    (2) Extra HP: 50g", 22, WHITE, WIDTH / 2, HEIGHT / 2)
+        self.draw_text("Things you can buy: (1) Extra speed: 50g    (2) Extra HP: 50g", 22, WHITE, WIDTH / 2,
+                       HEIGHT / 2)
         self.draw_text("Press Enter to exit store", 22, WHITE, WIDTH / 2, HEIGHT * 5 / 6)
         pg.display.flip()
         waiting = True
@@ -90,7 +92,7 @@ class Navigator(metaclass=NavigatorMeta):
                         self.game.draw_stats_bar()
                         pg.display.flip()
                     else:
-                        self.game.draw_text("Not enough money", 20, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
+                        self.draw_text("Not enough money", 20, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
                         pg.display.flip()
 
                 if (event.type == pg.KEYDOWN) and (event.key == pg.K_RETURN):

@@ -39,6 +39,8 @@ class Game:
         self.camera = Camera(self.player, self.creator.shiftable)
         self.bullet_list = self.creator.bullets
 
+    def stop(self):
+        self.playing = False
 
     def build_level_01(self):
 
@@ -69,8 +71,6 @@ class Game:
             n = randint(1, 4)
             self.creator.create_wall(room[3][random][0], room[3][random][1], n)
 
-
-
     def build_level_02(self):
 
         self.creator.empty_all_objects()
@@ -97,15 +97,14 @@ class Game:
 
         self.creator.create_enemy(EnemyType.SLIME_BLOCK, WIDTH / 2, HEIGHT / 2, self.player)
 
-
     def new(self, number):
-        if(number == 0):
+        if number == 0:
             self.build_level_01()
             self.run(number)
-        elif(number == 1):
+        elif number == 1:
             self.build_level_02()
             self.run(number)
-        elif(number == 2):
+        elif number == 2:
             self.build_level_03()
             self.run(number)
         else:
@@ -146,7 +145,6 @@ class Game:
         for bullet in collision_dict:
             for enemy in collision_dict[bullet]:
                 enemy.hp -= bullet.damage
-
 
         self.all_sprites.update()
         self.camera.update()
@@ -194,10 +192,10 @@ class Game:
 
         if abs((self.right_wall.rect.x - self.right_wall.rect.width / 2) - (
                 self.player.rect.x + self.player.rect.width / 2)) <= 25:
-                if(number == 0 or number == 1):
-                    self.navigator.go_to_store()
-                else:
-                    self.navigator.show_go_screen()
+            if number == 0 or number == 1:
+                self.navigator.go_to_store()
+            else:
+                self.navigator.show_go_screen()
 
     def draw_stats_bar(self):
         stats = "HP: " + str(self.player.hp) + ", money: " + str(self.player.money)
@@ -212,7 +210,6 @@ class Game:
         self.draw_stats_bar()
         self.all_sprites.draw(self.screen)
         pg.display.flip()
-
 
 
 Levels = 3
