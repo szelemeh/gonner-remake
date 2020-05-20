@@ -31,6 +31,7 @@ class Navigator(metaclass=NavigatorMeta):
                 if event.type == pg.QUIT:
                     waiting = False
                     self.game.running = False
+                    pg.quit()
                 if event.type == pg.KEYUP:
                     waiting = False
 
@@ -50,8 +51,8 @@ class Navigator(metaclass=NavigatorMeta):
         self.wait_for_key()
 
     def show_go_screen(self):
-        if not self.game.running:
-            return
+        # if not self.game.running:
+        #     return
         self.game.screen.fill(RED)
         self.draw_text("GAME OVER", 48, WHITE, WIDTH / 2, HEIGHT / 4)
         pg.display.flip()
@@ -94,10 +95,11 @@ class Navigator(metaclass=NavigatorMeta):
 
                 if (event.type == pg.KEYDOWN) and (event.key == pg.K_RETURN):
                     waiting = False
+                    self.game.playing = False
                     # self.go_to_next_level()
                 if event.type == pg.QUIT:
                     waiting = False
                     self.game.playing = False
 
-    def go_to_next_level(self):
+    def go_to_next_level(self, number):
         pass
