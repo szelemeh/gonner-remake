@@ -16,7 +16,7 @@ class Enemy(Actor):
     def __init__(self, x, y, width, height, animation, target):
         super().__init__(x, y, width, height, animation)
         self.target = target
-        self.hp = 10
+        self.hp = 3
 
     def get_target_distance(self):
         t_x = self.target.rect.x

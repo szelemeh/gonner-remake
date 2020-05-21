@@ -5,7 +5,7 @@ from game.physics_helper import *
 class Bullet(Actor):
     def __init__(self, x, y, animation=None):
         super().__init__(x, y, 20, 10, animation)
-        self.velocity = 2
+        self.velocity = 5
         self.reach_length = 1000
         self.damage = 1
 

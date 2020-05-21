@@ -9,6 +9,7 @@ class SlimeBlock(GroundEnemy):
         self.attack_velocity = 3
         self.move_countdown = 100
         self.vel_x = 2
+        self.hp = 15
 
     def attack(self):
         velocity = get_next_step_to(

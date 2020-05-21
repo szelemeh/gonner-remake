@@ -89,7 +89,7 @@ class Creator(metaclass=CreatorMeta):
             animation = SpriteAnimation()
             animation.add_idle(get_images("img/slimeblock/slimeBlock.png"))
             animation.add_move(get_images("img/slimeblock/slimeBlock.png"))
-            created_enemy = SlimeBlock(x, y, 150, 150, animation, target)
+            created_enemy = SlimeBlock(x, y, 51, 50, animation, target)
 
         else:
             return None
