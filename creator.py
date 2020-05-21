@@ -86,7 +86,10 @@ class Creator(metaclass=CreatorMeta):
             created_enemy = Worm(x, y, 63, 23, animation, target)
 
         elif enemy_type == EnemyType.SLIME_BLOCK:
-            created_enemy = SlimeBlock(x, y, 150, 150, None, target)
+            animation = SpriteAnimation()
+            animation.add_idle(get_images("img/slimeblock/slimeBlock.png"))
+            animation.add_move(get_images("img/slimeblock/slimeBlock.png"))
+            created_enemy = SlimeBlock(x, y, 150, 150, animation, target)
 
         else:
             return None
