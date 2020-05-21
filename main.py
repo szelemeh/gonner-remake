@@ -51,25 +51,16 @@ class Game:
 
         self.right_wall = self.creator.create_platform(WIDTH * 4, 0, 120, HEIGHT)
 
-        self.creator.create_platform(WIDTH / 2 - 400, 100, 200, 20)
-        self.creator.create_platform(WIDTH / 2 - 200, HEIGHT * 9 / 10, 100, 20)
+        self.map = []
+        with open('levels/map_1.txt', 'r') as f:
+            for line in f:
+                self.map.append(line)
 
-        self.creator.create_wall(room[0][8][0], room[0][8][1] + TILE_SIZE * 2, 2)
+        for row, tiles in enumerate(self.map):
+            for col, tile in enumerate(tiles):
+                if tile == '1':
+                    self.creator.create_wall(col * TILE_SIZE, row * TILE_SIZE, 1)
 
-        for i in range(3):
-            random = randint(3 * i, 3 * i + 2)
-            n = randint(1, 4)
-            self.creator.create_wall(room[1][random][0], room[1][random][1], n)
-
-        for i in range(3):
-            random = randint(3 * i, 3 * i + 2)
-            n = randint(1, 4)
-            self.creator.create_wall(room[2][random][0], room[2][random][1], n)
-
-        for i in range(3):
-            random = randint(3 * i, 3 * i + 2)
-            n = randint(1, 4)
-            self.creator.create_wall(room[3][random][0], room[3][random][1], n)
 
     def build_level_02(self):
 
@@ -78,7 +69,7 @@ class Game:
 
         self.right_wall = self.creator.create_platform(WIDTH * 4, 0, 120, HEIGHT)
         self.map = []
-        with open('map_2.txt', 'r') as f:
+        with open('levels/map_2.txt', 'r') as f:
             for line in f:
                 self.map.append(line)
 
@@ -86,7 +77,6 @@ class Game:
             for col, tile in enumerate(tiles):
                 if tile == '1':
                     self.creator.create_wall(col * TILE_SIZE, row * TILE_SIZE, 1)
-                    print("created tile")
 
     def build_level_03(self):
 
@@ -94,6 +84,16 @@ class Game:
         self.all_sprites.add(self.player)
 
         self.right_wall = self.creator.create_platform(WIDTH * 4, 0, 120, HEIGHT)
+
+        self.map = []
+        with open('levels/map_3.txt', 'r') as f:
+            for line in f:
+                self.map.append(line)
+
+        for row, tiles in enumerate(self.map):
+            for col, tile in enumerate(tiles):
+                if tile == '1':
+                    self.creator.create_wall(col * TILE_SIZE, row * TILE_SIZE, 1)
 
         self.creator.create_enemy(EnemyType.SLIME_BLOCK, WIDTH / 2, HEIGHT / 2, self.player)
 
