@@ -75,6 +75,8 @@ class Game:
         self.creator.empty_all_objects()
         self.all_sprites.add(self.player)
 
+        self.player.stop()
+
         for i in range(1, 5):
             self.creator.create_enemy(EnemyType.WORM, WIDTH * i / 3, HEIGHT / 2, self.player)
             self.creator.create_enemy(EnemyType.SLIME, WIDTH * i - 50, HEIGHT - 50, self.player)
@@ -106,6 +108,8 @@ class Game:
 
         self.creator.empty_all_objects()
         self.all_sprites.add(self.player)
+
+        self.player.stop()
 
         self.right_wall = self.creator.create_platform(WIDTH * 4, 0, 120, HEIGHT)
 
