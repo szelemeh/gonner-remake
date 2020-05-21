@@ -46,14 +46,12 @@ class Navigator(metaclass=NavigatorMeta):
     def show_start_screen(self):
         self.game.screen.fill(RED)
         self.draw_text(TITLE, 48, WHITE, WIDTH / 2, HEIGHT / 4)
-        self.draw_text("Use arrows to move and jump", 22, WHITE, WIDTH / 2, HEIGHT / 2)
+        self.draw_text("Use arrows to move around and space to shoot", 22, WHITE, WIDTH / 2, HEIGHT / 2)
         self.draw_text("Press a key to play", 22, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
         pg.display.flip()
         self.wait_for_key()
 
     def show_go_screen(self):
-        # if not self.game.running:
-        #     return
         self.game.screen.fill(RED)
         self.draw_text("GAME OVER", 48, WHITE, WIDTH / 2, HEIGHT / 4)
         pg.display.flip()
@@ -73,35 +71,32 @@ class Navigator(metaclass=NavigatorMeta):
             for event in pg.event.get():
                 if event.type == pg.KEYDOWN and event.key == pg.K_1:
                     if self.game.player.money >= 50:
-                        print("bought speed")
                         self.game.player.got_double_speed = True
                         self.game.player.money -= 50
                         self.game.screen.fill(RED, (0, 0, 200, 200))
+                        self.draw_text("Bought double jump - press left shift to activate", 20, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
                         self.game.draw_stats_bar()
                         pg.display.flip()
                     else:
-                        self.game.draw_text("Not enough money", 20, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
+                        self.draw_text("Not enough money", 20, WHITE, WIDTH / 2, HEIGHT * 5 / 6 - 100)
                         pg.display.flip()
 
                 if event.type == pg.KEYDOWN and event.key == pg.K_2:
                     if self.game.player.money >= 50:
-                        print("bought hp")
-                        self.game.player.hp += 500
+                        self.game.player.hp += 10
                         self.game.player.money -= 50
                         self.game.screen.fill(RED, (0, 0, 200, 200))
+                        self.draw_text("Bought hp", 20, WHITE, WIDTH / 2, HEIGHT * 3 / 4 - 100)
                         self.game.draw_stats_bar()
                         pg.display.flip()
                     else:
-                        self.draw_text("Not enough money", 20, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
+                        self.draw_text("Not enough money", 20, WHITE, WIDTH / 2, HEIGHT * 5 / 6 - 100)
                         pg.display.flip()
 
                 if (event.type == pg.KEYDOWN) and (event.key == pg.K_RETURN):
                     waiting = False
                     self.game.playing = False
-                    # self.go_to_next_level()
                 if event.type == pg.QUIT:
                     waiting = False
                     self.game.playing = False
 
-    def go_to_next_level(self, number):
-        pass
