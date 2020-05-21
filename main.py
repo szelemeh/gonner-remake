@@ -7,6 +7,7 @@ from game.camera import Camera
 from game.navigation import Navigator
 from game.settings import *
 from sprites.enemies.air_enemies.air_enemy import AirEnemy
+from sprites.enemies.ground_enemies.slime_block import SlimeBlock
 from sprites.enemies.enemy import EnemyType
 from sprites.weapon.weapon import Weapon
 
@@ -25,7 +26,6 @@ class Game:
         self.navigator = Navigator()
 
         self.creator = Creator()
-        self.creator.create_gold(WIDTH / 2, HEIGHT / 2)
 
         self.player = self.creator.create_player(WIDTH / 3, HEIGHT / 2)
         self.player.weapon = Weapon(self.creator)
@@ -45,14 +45,22 @@ class Game:
     def build_level_01(self):
 
         for i in range(1, 5):
-            self.creator.create_enemy(EnemyType.WORM, WIDTH / 3, HEIGHT / 2, self.player)
-            self.creator.create_enemy(EnemyType.SLIME, WIDTH - 50, HEIGHT - 50, self.player)
-            self.creator.create_enemy(EnemyType.GHOST, WIDTH - 50, HEIGHT / 2, self.player)
+            self.creator.create_enemy(EnemyType.WORM, WIDTH * i / 3, HEIGHT / 2, self.player)
+            self.creator.create_enemy(EnemyType.SLIME, WIDTH * i - 50, HEIGHT - 50, self.player)
+            self.creator.create_enemy(EnemyType.GHOST, WIDTH * i - 50, HEIGHT / 2, self.player)
 
         self.right_wall = self.creator.create_platform(WIDTH * 4, 0, 120, HEIGHT)
 
+        self.creator.create_gold(WIDTH / 2, HEIGHT / 2)
+        self.creator.create_gold(WIDTH * 2, HEIGHT / 2)
+        self.creator.create_gold(WIDTH * 3, HEIGHT / 2)
+
+        self.maps = ["levels/map_1.txt", "levels/map_2.txt", "levels/map_3.txt", \
+            "levels/map_4.txt", "levels/map_5.txt" ]
+        rand = randint(0, 1)
+
         self.map = []
-        with open('levels/map_1.txt', 'r') as f:
+        with open(self.maps[rand], 'r') as f:
             for line in f:
                 self.map.append(line)
 
@@ -67,9 +75,25 @@ class Game:
         self.creator.empty_all_objects()
         self.all_sprites.add(self.player)
 
+        for i in range(1, 5):
+            self.creator.create_enemy(EnemyType.WORM, WIDTH * i / 3, HEIGHT / 2, self.player)
+            self.creator.create_enemy(EnemyType.SLIME, WIDTH * i - 50, HEIGHT - 50, self.player)
+            self.creator.create_enemy(EnemyType.GHOST, WIDTH * i - 50, HEIGHT / 2, self.player)
+
+
         self.right_wall = self.creator.create_platform(WIDTH * 4, 0, 120, HEIGHT)
+
+        self.creator.create_gold(WIDTH / 2, HEIGHT / 2)
+        self.creator.create_gold(WIDTH * 2, HEIGHT / 2)
+        self.creator.create_gold(WIDTH * 3, HEIGHT / 2)
+
+
+        self.maps = ["levels/map_6.txt", "levels/map_7.txt", "levels/map_8.txt", \
+            "levels/map_10.txt", "levels/map_9.txt" ]
+        rand = randint(0, 1)
+
         self.map = []
-        with open('levels/map_2.txt', 'r') as f:
+        with open(self.maps[rand], 'r') as f:
             for line in f:
                 self.map.append(line)
 
@@ -86,7 +110,7 @@ class Game:
         self.right_wall = self.creator.create_platform(WIDTH * 4, 0, 120, HEIGHT)
 
         self.map = []
-        with open('levels/map_3.txt', 'r') as f:
+        with open('levels/map_final.txt', 'r') as f:
             for line in f:
                 self.map.append(line)
 
@@ -126,7 +150,7 @@ class Game:
 
         for coin in pg.sprite.spritecollide(self.player, self.coin_list, False):
             coin.kill()
-            self.player.money += 100
+            self.player.money += 30
 
         for enemy in pg.sprite.spritecollide(self.player, self.enemy_list, False):
             if abs(enemy.rect.x - self.player.rect.x) <= self.player.rect.width / 2 \
@@ -134,6 +158,11 @@ class Game:
                 self.player.receive_damage(1)
 
             if isinstance(enemy, AirEnemy) \
+                    and abs(enemy.rect.x - self.player.rect.x) <= self.player.rect.width / 2 \
+                    and abs(enemy.rect.y - self.player.rect.y) <= self.player.rect.height / 2:
+                self.player.receive_damage(1)
+
+            if isinstance(enemy, SlimeBlock) \
                     and abs(enemy.rect.x - self.player.rect.x) <= self.player.rect.width / 2 \
                     and abs(enemy.rect.y - self.player.rect.y) <= self.player.rect.height / 2:
                 self.player.receive_damage(1)
