@@ -123,7 +123,7 @@ class Game:
                 if tile == '1':
                     self.creator.create_wall(col * TILE_SIZE, row * TILE_SIZE, 1)
 
-        self.creator.create_enemy(EnemyType.SLIME_BLOCK, WIDTH / 2, HEIGHT / 2, self.player)
+        self.boss = self.creator.create_enemy(EnemyType.SLIME_BLOCK, WIDTH / 2, HEIGHT / 2, self.player)
 
     def new(self, number):
         if number == 0:
@@ -143,10 +143,10 @@ class Game:
         while self.playing:
             self.clock.tick(FPS)
             self.events(number)
-            self.update()
+            self.update(number)
             self.draw()
 
-    def update(self):
+    def update(self, number):
 
         if self.player.hp <= 0:
             self.player.kill()
@@ -223,12 +223,14 @@ class Game:
 
         self.all_sprites.update()
 
+
         if abs((self.right_wall.rect.x - self.right_wall.rect.width / 2) - (
                 self.player.rect.x + self.player.rect.width / 2)) <= 25:
             if number == 0 or number == 1:
                 self.navigator.go_to_store()
             else:
-                self.navigator.show_go_screen()
+                if(not self.boss.alive()):
+                    self.navigator.show_go_screen()
 
     def draw_stats_bar(self):
         stats = "HP: " + str(self.player.hp) + ", money: " + str(self.player.money)
