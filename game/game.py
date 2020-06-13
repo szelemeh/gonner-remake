@@ -1,3 +1,5 @@
+import sys
+
 import pygame as pg
 
 from creator import Creator
@@ -45,12 +47,13 @@ class Game:
 
     def stop(self):
         self.playing = False
+        self.running = False
 
     def new(self, number):
-        if (number == self.number_of_levels - 1):
+        if number == self.number_of_levels - 1:
             self.creator.build_level_final(self.player)
             self.run(number)
-        elif (number >= 0 and number < self.number_of_levels - 1):
+        elif 0 <= number < self.number_of_levels - 1:
             self.creator.build_level(number, self.player)
             self.run(number)
         else:
@@ -69,7 +72,7 @@ class Game:
 
         if self.player.hp <= 0:
             self.player.kill()
-            self.playing = False
+            self.navigator.show_go_screen()
 
         for coin in pg.sprite.spritecollide(self.player, self.coin_list, False):
             coin.kill()
@@ -104,11 +107,8 @@ class Game:
     def events(self, number):
         for event in pg.event.get():
             if event.type == pg.QUIT:
-                if self.playing:
-                    self.playing = False
-                self.running = False
-                self.navigator.show_go_screen()
                 pg.quit()
+                sys.exit()
 
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_SPACE:
@@ -131,7 +131,6 @@ class Game:
                         self.double_speed = False
                 if event.key == pg.K_UP:
                     self.player.jump()
-                    have_jumped = True
 
             if event.type == pg.KEYUP:
                 if event.key == pg.K_LEFT and self.player.vel_x < 0:
@@ -162,3 +161,10 @@ class Game:
         self.draw_stats_bar()
         self.all_sprites.draw(self.screen)
         pg.display.flip()
+
+    def reset(self):
+        self.player.hp = 10
+        self.player.money = 0
+        self.running = True
+        self.playing = True
+        pass

@@ -1,3 +1,4 @@
+import sys
 from enum import Enum
 
 import pygame as pg
@@ -39,14 +40,18 @@ class MainMenu:
                     elif event.key == pg.K_3:
                         waiting = False
                         self.quit()
+                if event.type == pg.QUIT:
+                    pg.quit()
+                    sys.exit()
 
     def play(self):
+        self.game.reset()
         for lvl in range(self.game.number_of_levels):
             if self.game.running:
                 print("You're on ", lvl)
                 self.game.new(lvl)
         # show congratulation screen or game over screen
-        self.quit()
+        self.show()
 
     def tutorial(self):
         self.game.screen.fill(RED)
