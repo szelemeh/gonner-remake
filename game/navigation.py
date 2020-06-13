@@ -31,7 +31,7 @@ class Navigator(metaclass=NavigatorMeta):
                     waiting = False
                     self.game.running = False
                     pg.quit()
-                if event.type == pg.KEYUP:
+                if event.type == pg.KEYUP and event.key == pg.K_RETURN:
                     waiting = False
                     if fun is not None:
                         fun()

@@ -59,7 +59,7 @@ class MainMenu:
         self.drawer.draw_text("Use arrows to move around and space to shoot", 22, WHITE, WIDTH / 2, HEIGHT / 2)
         self.drawer.draw_text("Press a key to play", 22, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
         pg.display.flip()
-        # self.nav.wait_for_key()
+        self.nav.wait_for_key()
 
     def quit(self):
         pg.quit()
