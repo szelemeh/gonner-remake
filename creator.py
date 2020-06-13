@@ -1,4 +1,7 @@
+
 from __future__ import annotations
+
+from random import randint
 
 from glob import glob
 from typing import Optional
@@ -41,6 +44,17 @@ class Creator(metaclass=CreatorMeta):
         self.bullets = pg.sprite.Group()
         self.player_collide_list = pg.sprite.Group()
         self.shiftable = pg.sprite.Group()
+        self.player = self.create_player(WIDTH / 3, HEIGHT / 2)
+
+
+    def create_platform(self, x, y, w, h):
+        created_platform = Platform(x, y, w, h)
+        self.all_sprites.add(created_platform)
+        self.platforms.add(created_platform)
+        self.player_collide_list.add(created_platform)
+        self.shiftable.add(created_platform)
+        return created_platform
+
 
     def create_wall(self, x, y, n):
         for i in range(n):
@@ -50,14 +64,6 @@ class Creator(metaclass=CreatorMeta):
                 self.tiles.add(created_tile)
                 self.shiftable.add(created_tile)
                 self.player_collide_list.add(created_tile)
-
-    def create_platform(self, x, y, w, h):
-        created_platform = Platform(x, y, w, h)
-        self.all_sprites.add(created_platform)
-        self.platforms.add(created_platform)
-        self.player_collide_list.add(created_platform)
-        self.shiftable.add(created_platform)
-        return created_platform
 
     def create_gold(self, x, y):
         created_coin = Coin(x, y, Image.open("img/gold/gold_0.png"))
@@ -125,3 +131,61 @@ class Creator(metaclass=CreatorMeta):
         self.bullets.empty()
         self.player_collide_list.empty()
         self.shiftable.empty()
+
+
+    def build_level(self, number, player):
+
+        self.empty_all_objects()
+        self.all_sprites.add(player)
+        player.stop()
+
+        for i in range(1, 5):
+            self.create_enemy(EnemyType.WORM, WIDTH * i / 3, HEIGHT / 2, player)
+            self.create_enemy(EnemyType.SLIME, WIDTH * i - 50, HEIGHT - 50, player)
+            self.create_enemy(EnemyType.GHOST, WIDTH * i - 50, HEIGHT / 2, player)
+
+
+        self.create_gold(WIDTH / 2, HEIGHT / 2)
+        self.create_gold(WIDTH * 2, HEIGHT / 2)
+        self.create_gold(WIDTH * 3, HEIGHT / 2)
+
+        self.right_wall = self.create_platform(WIDTH * 4, 0, 120, HEIGHT)
+
+        maps = ["levels/map_1.txt", "levels/map_2.txt", "levels/map_3.txt", \
+            "levels/map_4.txt", "levels/map_5.txt", "levels/map_6.txt", "levels/map_7.txt", \
+                "levels/map_8.txt", "levels/map_10.txt", "levels/map_9.txt" ]
+        
+        rand = randint(0, 1)
+
+        map = []
+        with open(maps[rand], 'r') as f:
+            for line in f:
+                map.append(line)
+
+        for row, tiles in enumerate(map):
+            for col, tile in enumerate(tiles):
+                if tile == '1':
+                    self.create_wall(col * TILE_SIZE, row * TILE_SIZE, 1)
+
+
+
+    def build_level_final(self, player):
+
+        self.empty_all_objects()
+        self.all_sprites.add(player)
+
+        player.stop()
+
+        self.right_wall = self.create_platform(WIDTH * 4, 0, 120, HEIGHT)
+
+        map = []
+        with open('levels/map_final.txt', 'r') as f:
+            for line in f:
+                map.append(line)
+
+        for row, tiles in enumerate(map):
+            for col, tile in enumerate(tiles):
+                if tile == '1':
+                    self.create_wall(col * TILE_SIZE, row * TILE_SIZE, 1)
+
+        self.boss = self.create_enemy(EnemyType.SLIME_BLOCK, WIDTH / 2, HEIGHT / 2, player)
