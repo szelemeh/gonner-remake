@@ -1,5 +1,3 @@
-from random import randint
-
 import pygame as pg
 
 from creator import Creator
@@ -8,7 +6,6 @@ from game.drawer import Drawer
 from game.navigation import Navigator
 from game.settings import *
 from sprites.enemies.air_enemies.air_enemy import AirEnemy
-from sprites.enemies.enemy import EnemyType
 from sprites.enemies.ground_enemies.slime_block import SlimeBlock
 from sprites.weapon.weapon import Weapon
 
@@ -22,6 +19,7 @@ class Game:
         self.clock = pg.time.Clock()
         self.running = True
         self.double_speed = False
+        self.number_of_levels = 3
 
         self.navigator = Navigator(self)
         self.drawer = Drawer(self.screen)
@@ -42,101 +40,18 @@ class Game:
         self.bullet_list = self.creator.bullets
 
     def init_player(self):
-        self.player = self.creator.create_player(WIDTH / 3, HEIGHT / 2)
+        self.player = self.creator.player
         self.player.weapon = Weapon(self.creator)
 
     def stop(self):
         self.playing = False
 
-    def build_level_01(self):
-
-        for i in range(1, 5):
-            self.creator.create_enemy(EnemyType.WORM, WIDTH * i / 3, HEIGHT / 2, self.player)
-            self.creator.create_enemy(EnemyType.SLIME, WIDTH * i - 50, HEIGHT - 50, self.player)
-            self.creator.create_enemy(EnemyType.GHOST, WIDTH * i - 50, HEIGHT / 2, self.player)
-
-        self.right_wall = self.creator.create_platform(WIDTH * 4, 0, 120, HEIGHT)
-
-        self.creator.create_gold(WIDTH / 2, HEIGHT / 2)
-        self.creator.create_gold(WIDTH * 2, HEIGHT / 2)
-        self.creator.create_gold(WIDTH * 3, HEIGHT / 2)
-
-        self.maps = ["levels/map_1.txt", "levels/map_2.txt", "levels/map_3.txt", \
-                     "levels/map_4.txt", "levels/map_5.txt"]
-        rand = randint(0, 1)
-
-        self.map = []
-        with open(self.maps[rand], 'r') as f:
-            for line in f:
-                self.map.append(line)
-
-        for row, tiles in enumerate(self.map):
-            for col, tile in enumerate(tiles):
-                if tile == '1':
-                    self.creator.create_wall(col * TILE_SIZE, row * TILE_SIZE, 1)
-
-    def build_level_02(self):
-
-        self.creator.empty_all_objects()
-        self.all_sprites.add(self.player)
-
-        self.player.stop()
-
-        for i in range(1, 5):
-            self.creator.create_enemy(EnemyType.WORM, WIDTH * i / 3, HEIGHT / 2, self.player)
-            self.creator.create_enemy(EnemyType.SLIME, WIDTH * i - 50, HEIGHT - 50, self.player)
-            self.creator.create_enemy(EnemyType.GHOST, WIDTH * i - 50, HEIGHT / 2, self.player)
-
-        self.right_wall = self.creator.create_platform(WIDTH * 4, 0, 120, HEIGHT)
-
-        self.creator.create_gold(WIDTH / 2, HEIGHT / 2)
-        self.creator.create_gold(WIDTH * 2, HEIGHT / 2)
-        self.creator.create_gold(WIDTH * 3, HEIGHT / 2)
-
-        self.maps = ["levels/map_6.txt", "levels/map_7.txt", "levels/map_8.txt", \
-                     "levels/map_10.txt", "levels/map_9.txt"]
-        rand = randint(0, 1)
-
-        self.map = []
-        with open(self.maps[rand], 'r') as f:
-            for line in f:
-                self.map.append(line)
-
-        for row, tiles in enumerate(self.map):
-            for col, tile in enumerate(tiles):
-                if tile == '1':
-                    self.creator.create_wall(col * TILE_SIZE, row * TILE_SIZE, 1)
-
-    def build_level_03(self):
-
-        self.creator.empty_all_objects()
-        self.all_sprites.add(self.player)
-
-        self.player.stop()
-
-        self.right_wall = self.creator.create_platform(WIDTH * 4, 0, 120, HEIGHT)
-
-        self.map = []
-        with open('levels/map_final.txt', 'r') as f:
-            for line in f:
-                self.map.append(line)
-
-        for row, tiles in enumerate(self.map):
-            for col, tile in enumerate(tiles):
-                if tile == '1':
-                    self.creator.create_wall(col * TILE_SIZE, row * TILE_SIZE, 1)
-
-        self.boss = self.creator.create_enemy(EnemyType.SLIME_BLOCK, WIDTH / 2, HEIGHT / 2, self.player)
-
     def new(self, number):
-        if number == 0:
-            self.build_level_01()
+        if (number == self.number_of_levels - 1):
+            self.creator.build_level_final(self.player)
             self.run(number)
-        elif number == 1:
-            self.build_level_02()
-            self.run(number)
-        elif number == 2:
-            self.build_level_03()
+        elif (number >= 0 and number < self.number_of_levels - 1):
+            self.creator.build_level(number, self.player)
             self.run(number)
         else:
             return
@@ -189,8 +104,11 @@ class Game:
     def events(self, number):
         for event in pg.event.get():
             if event.type == pg.QUIT:
-                self.playing = False
+                if self.playing:
+                    self.playing = False
                 self.running = False
+                self.navigator.show_go_screen()
+                pg.quit()
 
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_SPACE:
@@ -213,6 +131,7 @@ class Game:
                         self.double_speed = False
                 if event.key == pg.K_UP:
                     self.player.jump()
+                    have_jumped = True
 
             if event.type == pg.KEYUP:
                 if event.key == pg.K_LEFT and self.player.vel_x < 0:
@@ -222,12 +141,13 @@ class Game:
 
         self.all_sprites.update()
 
-        if abs((self.right_wall.rect.x - self.right_wall.rect.width / 2) - (
+        if abs((self.creator.right_wall.rect.x - self.creator.right_wall.rect.width / 2) - (
                 self.player.rect.x + self.player.rect.width / 2)) <= 25:
-            if number == 0 or number == 1:
+            if number < self.number_of_levels - 1:
                 self.navigator.go_to_store()
-            elif not self.boss.alive():
-                self.navigator.show_go_screen()
+            elif number == self.number_of_levels - 1:
+                if not self.creator.boss.alive():
+                    self.navigator.show_go_screen()
 
     def draw_stats_bar(self):
         stats = "HP: " + str(self.player.hp) + ", money: " + str(self.player.money)

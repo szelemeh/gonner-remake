@@ -41,7 +41,7 @@ class MainMenu:
                         self.quit()
 
     def play(self):
-        for lvl in range(self.levels):
+        for lvl in range(self.game.number_of_levels):
             if self.game.running:
                 print("You're on ", lvl)
                 self.game.new(lvl)
