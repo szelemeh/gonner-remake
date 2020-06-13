@@ -22,12 +22,13 @@ class Game:
         self.running = True
         self.can_jump = True
         self.double_speed = False
+        self.number_of_levels = 3
 
         self.navigator = Navigator()
 
         self.creator = Creator()
 
-        self.player = self.creator.create_player(WIDTH / 3, HEIGHT / 2)
+        self.player = self.creator.player
         self.player.weapon = Weapon(self.creator)
 
         self.all_sprites = self.creator.all_sprites
@@ -42,98 +43,15 @@ class Game:
     def stop(self):
         self.playing = False
 
-    def build_level_01(self):
-
-        for i in range(1, 5):
-            self.creator.create_enemy(EnemyType.WORM, WIDTH * i / 3, HEIGHT / 2, self.player)
-            self.creator.create_enemy(EnemyType.SLIME, WIDTH * i - 50, HEIGHT - 50, self.player)
-            self.creator.create_enemy(EnemyType.GHOST, WIDTH * i - 50, HEIGHT / 2, self.player)
-
-        self.right_wall = self.creator.create_platform(WIDTH * 4, 0, 120, HEIGHT)
-
-        self.creator.create_gold(WIDTH / 2, HEIGHT / 2)
-        self.creator.create_gold(WIDTH * 2, HEIGHT / 2)
-        self.creator.create_gold(WIDTH * 3, HEIGHT / 2)
-
-        self.maps = ["levels/map_1.txt", "levels/map_2.txt", "levels/map_3.txt", \
-            "levels/map_4.txt", "levels/map_5.txt" ]
-        rand = randint(0, 1)
-
-        self.map = []
-        with open(self.maps[rand], 'r') as f:
-            for line in f:
-                self.map.append(line)
-
-        for row, tiles in enumerate(self.map):
-            for col, tile in enumerate(tiles):
-                if tile == '1':
-                    self.creator.create_wall(col * TILE_SIZE, row * TILE_SIZE, 1)
 
 
-    def build_level_02(self):
-
-        self.creator.empty_all_objects()
-        self.all_sprites.add(self.player)
-
-        self.player.stop()
-
-        for i in range(1, 5):
-            self.creator.create_enemy(EnemyType.WORM, WIDTH * i / 3, HEIGHT / 2, self.player)
-            self.creator.create_enemy(EnemyType.SLIME, WIDTH * i - 50, HEIGHT - 50, self.player)
-            self.creator.create_enemy(EnemyType.GHOST, WIDTH * i - 50, HEIGHT / 2, self.player)
-
-
-        self.right_wall = self.creator.create_platform(WIDTH * 4, 0, 120, HEIGHT)
-
-        self.creator.create_gold(WIDTH / 2, HEIGHT / 2)
-        self.creator.create_gold(WIDTH * 2, HEIGHT / 2)
-        self.creator.create_gold(WIDTH * 3, HEIGHT / 2)
-
-
-        self.maps = ["levels/map_6.txt", "levels/map_7.txt", "levels/map_8.txt", \
-            "levels/map_10.txt", "levels/map_9.txt" ]
-        rand = randint(0, 1)
-
-        self.map = []
-        with open(self.maps[rand], 'r') as f:
-            for line in f:
-                self.map.append(line)
-
-        for row, tiles in enumerate(self.map):
-            for col, tile in enumerate(tiles):
-                if tile == '1':
-                    self.creator.create_wall(col * TILE_SIZE, row * TILE_SIZE, 1)
-
-    def build_level_03(self):
-
-        self.creator.empty_all_objects()
-        self.all_sprites.add(self.player)
-
-        self.player.stop()
-
-        self.right_wall = self.creator.create_platform(WIDTH * 4, 0, 120, HEIGHT)
-
-        self.map = []
-        with open('levels/map_final.txt', 'r') as f:
-            for line in f:
-                self.map.append(line)
-
-        for row, tiles in enumerate(self.map):
-            for col, tile in enumerate(tiles):
-                if tile == '1':
-                    self.creator.create_wall(col * TILE_SIZE, row * TILE_SIZE, 1)
-
-        self.boss = self.creator.create_enemy(EnemyType.SLIME_BLOCK, WIDTH / 2, HEIGHT / 2, self.player)
 
     def new(self, number):
-        if number == 0:
-            self.build_level_01()
+        if(number == self.number_of_levels - 1):
+            self.creator.build_level_final(self.player)
             self.run(number)
-        elif number == 1:
-            self.build_level_02()
-            self.run(number)
-        elif number == 2:
-            self.build_level_03()
+        elif(number >= 0 and number < self.number_of_levels - 1):
+            self.creator.build_level(number, self.player)
             self.run(number)
         else:
             return
@@ -224,12 +142,12 @@ class Game:
         self.all_sprites.update()
 
 
-        if abs((self.right_wall.rect.x - self.right_wall.rect.width / 2) - (
+        if abs((self.creator.right_wall.rect.x - self.creator.right_wall.rect.width / 2) - (
                 self.player.rect.x + self.player.rect.width / 2)) <= 25:
-            if number == 0 or number == 1:
+            if number < self.number_of_levels - 1:
                 self.navigator.go_to_store()
-            else:
-                if(not self.boss.alive()):
+            elif number == self.number_of_levels - 1:
+                if(not self.creator.boss.alive()):
                     self.navigator.show_go_screen()
 
     def draw_stats_bar(self):
@@ -247,13 +165,12 @@ class Game:
         pg.display.flip()
 
 
-Levels = 3
 g = Game()
 nav = Navigator()
 nav.set_game(g)
 nav.show_start_screen()
 while g.running:
-    for lvl in range(Levels):
+    for lvl in range(g.number_of_levels):
         print("You're on ", lvl)
         g.new(lvl)
     g.running = False
