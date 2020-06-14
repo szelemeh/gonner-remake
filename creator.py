@@ -7,6 +7,7 @@ from typing import Optional
 import pygame as pg
 from PIL import Image
 
+from game.drawer import Drawer
 from game.settings import *
 from sprites.enemies.air_enemies.ghost import Ghost
 from sprites.enemies.enemy import EnemyType
@@ -43,6 +44,7 @@ class Creator(metaclass=CreatorMeta):
         self.bullets = pg.sprite.Group()
         self.player_collide_list = pg.sprite.Group()
         self.shiftable = pg.sprite.Group()
+        self.texts = []
         self.player = self.create_player(WIDTH / 3, HEIGHT / 2)
 
     def create_platform(self, x, y, w, h):
@@ -129,20 +131,11 @@ class Creator(metaclass=CreatorMeta):
         self.player_collide_list.empty()
         self.shiftable.empty()
 
-    def build_level(self, number, player):
+    def build_level(self, player):
 
         self.empty_all_objects()
         self.all_sprites.add(player)
         player.stop()
-
-        for i in range(1, 5):
-            self.create_enemy(EnemyType.WORM, WIDTH * i / 3, HEIGHT / 2, player)
-            self.create_enemy(EnemyType.SLIME, WIDTH * i - 50, HEIGHT - 50, player)
-            self.create_enemy(EnemyType.GHOST, WIDTH * i - 50, HEIGHT / 2, player)
-
-        self.create_gold(WIDTH / 2, HEIGHT / 2)
-        self.create_gold(WIDTH * 2, HEIGHT / 2)
-        self.create_gold(WIDTH * 3, HEIGHT / 2)
 
         self.right_wall = self.create_platform(WIDTH * 4, 0, 120, HEIGHT)
 
@@ -152,15 +145,9 @@ class Creator(metaclass=CreatorMeta):
 
         rand = randint(0, 1)
 
-        map = []
-        with open(maps[rand], 'r') as f:
-            for line in f:
-                map.append(line)
+        level_map = self.read_map(maps[rand])
 
-        for row, tiles in enumerate(map):
-            for col, tile in enumerate(tiles):
-                if tile == '1':
-                    self.create_wall(col * TILE_SIZE, row * TILE_SIZE, 1)
+        self.build_map(level_map)
 
     def build_level_final(self, player):
 
@@ -171,14 +158,67 @@ class Creator(metaclass=CreatorMeta):
 
         self.right_wall = self.create_platform(WIDTH * 4, 0, 120, HEIGHT)
 
-        map = []
-        with open('levels/map_final.txt', 'r') as f:
+        level_map = self.read_map('levels/map_final.txt')
+
+        self.build_map(level_map)
+
+        self.boss = self.create_enemy(EnemyType.SLIME_BLOCK, WIDTH * 2, HEIGHT / 2, player)
+
+    def reset_level(self, player):
+        self.empty_all_objects()
+        self.all_sprites.add(player)
+        player.stop()
+        self.right_wall = self.create_platform(WIDTH * 5, 0, 120, HEIGHT * 10)
+
+    def build_tutorial_level(self, player, screen):
+        self.reset_level(player)
+
+        level_map = self.read_map('levels/map_tutorial.txt')
+
+        self.player = player
+        self.drawer = Drawer(screen)
+
+        self.build_map(level_map)
+
+    def build_map(self, level_map):
+        for row, objs in enumerate(level_map):
+            for col, obj in enumerate(objs):
+                self.create_object(row, col, obj)
+
+    def create_object(self, row, col, obj):
+        if obj == '1':
+            self.create_wall(col * TILE_SIZE, row * TILE_SIZE, 1)
+        elif obj == 'm':
+            self.create_text(self.drawer, col * TILE_SIZE, row * TILE_SIZE,
+                             "Move left or right using arrows <- and ->!")
+        elif obj == 'j':
+            self.create_text(self.drawer, col * TILE_SIZE, row * TILE_SIZE, "Jump using 'up' arrow!")
+        elif obj == 'c':
+            self.create_text(self.drawer, col * TILE_SIZE, row * TILE_SIZE, "Collect coins!")
+            self.create_gold(col * TILE_SIZE, (row + 2) * TILE_SIZE)
+        elif obj == 'C':
+            self.create_gold(col * TILE_SIZE, (row - 2) * TILE_SIZE)
+        elif obj == 'w':
+            self.create_text(self.drawer, col * TILE_SIZE, row * TILE_SIZE, "Climb a wall by coming closer to it!")
+        elif obj == 's':
+            self.create_text(self.drawer, col * TILE_SIZE, row * TILE_SIZE, "Press space to shoot!")
+        elif obj == 'G':
+            self.create_enemy(EnemyType.GHOST, col * TILE_SIZE, row * TILE_SIZE, self.player)
+        elif obj == 'd':
+            self.create_text(self.drawer, col * TILE_SIZE, row * TILE_SIZE, "Press 'shift' to enable double speed!")
+        elif obj == 'S':
+            self.create_enemy(EnemyType.SLIME, col * TILE_SIZE, row * TILE_SIZE, self.player)
+        elif obj == 'W':
+            self.create_enemy(EnemyType.WORM, col * TILE_SIZE, row * TILE_SIZE, self.player)
+
+    @staticmethod
+    def read_map(path):
+        level_map = []
+        with open(path, 'r') as f:
             for line in f:
-                map.append(line)
+                level_map.append(line)
+        return level_map
 
-        for row, tiles in enumerate(map):
-            for col, tile in enumerate(tiles):
-                if tile == '1':
-                    self.create_wall(col * TILE_SIZE, row * TILE_SIZE, 1)
-
-        self.boss = self.create_enemy(EnemyType.SLIME_BLOCK, WIDTH / 2, HEIGHT / 2, player)
+    def create_text(self, drawer, x, y, text):
+        text_surface = drawer.draw_medium_text(text, x, y)
+        self.texts.append(text_surface)

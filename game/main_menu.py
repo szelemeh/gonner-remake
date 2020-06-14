@@ -55,11 +55,9 @@ class MainMenu:
 
     def tutorial(self):
         self.game.screen.fill(RED)
-        self.drawer.draw_text(TITLE, 48, WHITE, WIDTH / 2, HEIGHT / 4)
-        self.drawer.draw_text("Use arrows to move around and space to shoot", 22, WHITE, WIDTH / 2, HEIGHT / 2)
-        self.drawer.draw_text("Press a key to play", 22, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
-        pg.display.flip()
-        self.nav.wait_for_key()
+        self.game.reset()
+        self.game.tutorial()
+        self.show()
 
     def quit(self):
         pg.quit()

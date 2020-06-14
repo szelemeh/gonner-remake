@@ -36,9 +36,18 @@ class Navigator(metaclass=NavigatorMeta):
                     if fun is not None:
                         fun()
 
+    def show_tutorial_done_screen(self):
+        self.__show_screen_with_text_n_finish("You have finished the tutorial!")
+
     def show_go_screen(self):
+        self.__show_screen_with_text_n_finish("GAME OVER")
+
+    def show_congrats_screen(self):
+        self.__show_screen_with_text_n_finish("Congratulations, you have won!")
+
+    def __show_screen_with_text_n_finish(self, text):
         self.game.screen.fill(RED)
-        self.drawer.draw_text("GAME OVER", 48, WHITE, WIDTH / 2, HEIGHT / 4)
+        self.drawer.draw_text(text, 48, WHITE, WIDTH / 2, HEIGHT / 4)
         pg.display.flip()
         self.wait_for_key(lambda: self.game.stop())
 
@@ -85,3 +94,4 @@ class Navigator(metaclass=NavigatorMeta):
                 if event.type == pg.QUIT:
                     waiting = False
                     self.game.playing = False
+

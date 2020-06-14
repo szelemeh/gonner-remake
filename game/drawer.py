@@ -14,3 +14,7 @@ class Drawer:
         text_rect = text_surface.get_rect()
         text_rect.midtop = (x, y)
         self.screen.blit(text_surface, text_rect)
+        return text_surface, text_rect
+
+    def draw_medium_text(self, text, x, y):
+        return self.draw_text(text, 24, WHITE, x, y)

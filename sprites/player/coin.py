@@ -1,5 +1,5 @@
 import pygame as pg
-from game.settings import *
+
 from sprites.actor import Actor
 
 
@@ -14,6 +14,6 @@ class Coin(Actor):
         self.rect.y = y
 
     def update(self):
-        self.apply_gravity()
+        # self.apply_gravity()
         self.rect.x += self.vel_x
         self.rect.y += self.vel_y

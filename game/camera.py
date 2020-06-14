@@ -1,8 +1,7 @@
-
-
 class Camera:
-    def __init__(self, player, sprites_to_shift):
+    def __init__(self, player, sprites_to_shift, texts):
         self.sprites_to_shift = sprites_to_shift
+        self.texts = texts
         self.player = player
         self.world_shift = 0
 
@@ -15,17 +14,8 @@ class Camera:
         for o in self.sprites_to_shift:
             o.rect.x += shift_x
 
-        # for platform in self.platform_list:
-        #     platform.rect.x += shift_x
-        #
-        # for tile in self.tiles_list:
-        #     tile.rect.x += shift_x
-        #
-        # for enemy in self.enemy_list:
-        #     enemy.rect.x += shift_x
-        #
-        # for gold in self.gold:
-        #     gold.rect.x += shift_x
+        for _, rect in self.texts:
+            rect.midtop = (rect.midtop[0] + shift_x, rect.midtop[1])
 
     def update(self):
         if self.player.rect.right >= 500:

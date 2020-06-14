@@ -30,7 +30,9 @@ class Game:
         self.init_player()
         self.init_sprite_lists()
 
-        self.camera = Camera(self.player, self.creator.shiftable)
+        self.camera = Camera(self.player, self.creator.shiftable, self.creator.texts)
+
+        self.is_tutorial = False
 
     def init_sprite_lists(self):
         self.all_sprites = self.creator.all_sprites
@@ -49,21 +51,22 @@ class Game:
         self.playing = False
         self.running = False
 
-    def new(self, number):
-        if number == self.number_of_levels - 1:
+    def new(self, level):
+        self.current_level = level
+        if level == self.number_of_levels - 1:
             self.creator.build_level_final(self.player)
-            self.run(number)
-        elif 0 <= number < self.number_of_levels - 1:
-            self.creator.build_level(number, self.player)
-            self.run(number)
+            self.run()
+        elif 0 <= level < self.number_of_levels - 1:
+            self.creator.build_level(self.player)
+            self.run()
         else:
             return
 
-    def run(self, number):
+    def run(self):
         self.playing = True
         while self.playing:
             self.clock.tick(FPS)
-            self.events(number)
+            self.events()
             self.update()
             if self.playing:
                 self.draw()
@@ -86,12 +89,14 @@ class Game:
             if isinstance(enemy, AirEnemy) \
                     and abs(enemy.rect.x - self.player.rect.x) <= self.player.rect.width / 2 \
                     and abs(enemy.rect.y - self.player.rect.y) <= self.player.rect.height / 2:
-                self.player.receive_damage(1)
+                if not self.is_tutorial:
+                    self.player.receive_damage(1)
 
             if isinstance(enemy, SlimeBlock) \
                     and abs(enemy.rect.x - self.player.rect.x) <= self.player.rect.width / 2 \
                     and abs(enemy.rect.y - self.player.rect.y) <= self.player.rect.height / 2:
-                self.player.receive_damage(1)
+                if not self.is_tutorial:
+                    self.player.receive_damage(1)
 
         pg.sprite.groupcollide(self.bullet_list, self.platform_list, True, False)
         pg.sprite.groupcollide(self.bullet_list, self.tile_list, True, False)
@@ -104,7 +109,7 @@ class Game:
         self.all_sprites.update()
         self.camera.update()
 
-    def events(self, number):
+    def events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 pg.quit()
@@ -142,11 +147,14 @@ class Game:
 
         if abs((self.creator.right_wall.rect.x - self.creator.right_wall.rect.width / 2) - (
                 self.player.rect.x + self.player.rect.width / 2)) <= 25:
-            if number < self.number_of_levels - 1:
-                self.navigator.go_to_store()
-            elif number == self.number_of_levels - 1:
-                if not self.creator.boss.alive():
-                    self.navigator.show_go_screen()
+            if self.is_tutorial:
+                self.navigator.show_tutorial_done_screen()
+            else:
+                if self.current_level < self.number_of_levels - 1:
+                    self.navigator.go_to_store()
+                elif self.current_level == self.number_of_levels - 1:
+                    if not self.creator.boss.alive():
+                        self.navigator.show_congrats_screen()
 
     def draw_stats_bar(self):
         stats = "HP: " + str(self.player.hp) + ", money: " + str(self.player.money)
@@ -160,7 +168,13 @@ class Game:
         self.screen.fill(RED)
         self.draw_stats_bar()
         self.all_sprites.draw(self.screen)
+        if self.is_tutorial:
+            self.blit_texts()
         pg.display.flip()
+
+    def blit_texts(self):
+        for sf, rect in self.creator.texts:
+            self.screen.blit(sf, rect.midtop)
 
     def reset(self):
         self.player.hp = 10
@@ -168,3 +182,8 @@ class Game:
         self.running = True
         self.playing = True
         pass
+
+    def tutorial(self):
+        self.is_tutorial = True
+        self.creator.build_tutorial_level(self.player, self.screen)
+        self.run()
