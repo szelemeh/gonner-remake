@@ -4,7 +4,7 @@ from typing import Optional
 
 import pygame as pg
 
-from game.drawer import Drawer
+from drawer import Drawer
 from game.settings import *
 
 

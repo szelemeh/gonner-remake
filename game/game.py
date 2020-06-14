@@ -3,8 +3,8 @@ import sys
 import pygame as pg
 
 from creator import Creator
+from drawer import Drawer
 from game.camera import Camera
-from game.drawer import Drawer
 from game.navigation import Navigator
 from game.settings import *
 from sprites.enemies.air_enemies.air_enemy import AirEnemy
@@ -187,4 +187,6 @@ class Game:
         self.run()
 
     def is_boss_level(self):
+        if self.is_tutorial:
+            return False
         return self.current_level == self.number_of_levels - 1

@@ -3,7 +3,7 @@ from enum import Enum
 
 import pygame as pg
 
-from game.drawer import Drawer
+from drawer import Drawer
 from game.game import Game
 from game.navigation import Navigator
 from game.settings import *

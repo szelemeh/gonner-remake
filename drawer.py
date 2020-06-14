@@ -20,7 +20,8 @@ class Drawer:
         return self.draw_text(text, 24, WHITE, x, y)
 
     def draw_player_stats(self, player):
-        stats = "Coins: " + str(player.money) + "   HP: "
+
+        stats = "Money:  " + str(player.money) + "   HP: "
         self.draw_text(stats, 20, WHITE, 80, 20)
         if player.got_double_speed:
             features = "You've got double speed!"
