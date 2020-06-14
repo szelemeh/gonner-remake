@@ -9,7 +9,8 @@ class SlimeBlock(GroundEnemy):
         self.attack_velocity = 3
         self.move_countdown = 100
         self.vel_x = 2
-        self.hp = 15
+        self.max_hp = 50
+        self.hp = 50
 
     def attack(self):
         velocity = get_next_step_to(
@@ -18,6 +19,9 @@ class SlimeBlock(GroundEnemy):
             self.attack_velocity)
         self.vel_x = velocity[0]
         self.vel_y = velocity[1]
+
+    def alive(self):
+        return self.hp > 0
 
     def rest(self):
         difference = self.rect.x - self.target.rect.x

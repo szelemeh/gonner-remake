@@ -12,8 +12,3 @@ class Coin(Actor):
         self.vel_x = 0
         self.rect.x = x
         self.rect.y = y
-
-    def update(self):
-        # self.apply_gravity()
-        self.rect.x += self.vel_x
-        self.rect.y += self.vel_y

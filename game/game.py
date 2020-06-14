@@ -152,17 +152,15 @@ class Game:
             else:
                 if self.current_level < self.number_of_levels - 1:
                     self.navigator.go_to_store()
-                elif self.current_level == self.number_of_levels - 1:
+                elif self.is_boss_level():
                     if not self.creator.boss.alive():
                         self.navigator.show_congrats_screen()
 
     def draw_stats_bar(self):
-        stats = "HP: " + str(self.player.hp) + ", money: " + str(self.player.money)
-        self.drawer.draw_text(stats, 20, WHITE, 80, 20)
+        self.drawer.draw_player_stats(self.player)
 
-        if self.player.got_double_speed:
-            features = "You've got double speed!"
-            self.drawer.draw_text(features, 20, WHITE, 120, 40)
+        if self.is_boss_level():
+            self.drawer.draw_health_bar(self.creator.boss, WIDTH / 2 - 125, HEIGHT / 4, 5)
 
     def draw(self):
         self.screen.fill(RED)
@@ -187,3 +185,6 @@ class Game:
         self.is_tutorial = True
         self.creator.build_tutorial_level(self.player, self.screen)
         self.run()
+
+    def is_boss_level(self):
+        return self.current_level == self.number_of_levels - 1

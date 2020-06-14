@@ -1,6 +1,6 @@
-from game.settings import *
 import pygame as pg
 
+from game.settings import *
 from sprites.actor import Actor
 
 
@@ -12,6 +12,7 @@ class Player(Actor):
         self.collide_list = pg.sprite.Group()
 
         self.hp = PLAYER_MAX_HP
+        self.max_hp = PLAYER_MAX_HP
         self.money = 0
         self.got_double_speed = False
 
