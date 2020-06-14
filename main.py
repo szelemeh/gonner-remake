@@ -1,4 +1,5 @@
 from game.main_menu import MainMenu
 
-menu = MainMenu()
-menu.show()
+if __name__ == "__main__":
+  menu = MainMenu()
+  menu.show()
