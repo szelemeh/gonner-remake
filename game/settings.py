@@ -1,0 +1,31 @@
+TITLE = 'GoNNER'
+WIDTH = 1023
+HEIGHT = 576
+FPS = 60
+
+FONT_NAME = 'arial'
+
+TILE_SIZE = 32
+
+# Player properties
+PLAYER_SPEED = 6
+GRAVITY = 0.35
+PLAYER_MAX_HP = 10
+
+# define colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (122, 23, 46)
+GREEN = (31, 122, 31)
+BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
+LIGHTBLUE = (72, 132, 130)
+GREY = (50, 32, 36)
+
+# Player properties
+PLAYER_ACCELERATION = 0.5
+PLAYER_FRICTION = -0.12
+
+# Mob properties
+MOB_ACCELERATION = 1
+MOB_FRICTION = -0.2
