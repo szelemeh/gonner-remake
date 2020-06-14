@@ -166,9 +166,8 @@ class Game:
         self.drawer.draw_player_stats(self.player)
 
         if self.is_boss_level():
-            # self.drawer.draw_health_bar(
-            #     self.creator.boss, WIDTH / 2 - 125, HEIGHT / 4, 5)
-            self.drawer.draw_health_bar(self.creator.boss, 700, 20, 5)
+            self.drawer.draw_health_bar(
+                self.creator.boss, 700, 20, 5)
 
     def draw(self):
         self.screen.fill(RED)
