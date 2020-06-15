@@ -73,7 +73,7 @@ class Navigator(metaclass=NavigatorMeta):
                         self.game.player.money -= 50
                         self.game.screen.fill(RED, (0, 0, 200, 200))
                         self.drawer.draw_text(
-                            'Bought double jump - press left shift to activate',
+                            'Bought double speed - press left shift to activate',
                             20, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
                         self.game.draw_stats_bar()
                         pg.display.flip()
