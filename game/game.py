@@ -53,6 +53,7 @@ class Game:
         self.running = False
 
     def new(self, level):
+        """ Calls level or final level building and playing loop """
         self.current_level = level
         if level == self.number_of_levels - 1:
             self.creator.build_level_final(self.player)
@@ -73,6 +74,7 @@ class Game:
                 self.draw()
 
     def update(self):
+        """ Handles screen updates """
 
         if self.player.hp <= 0:
             self.player.kill()
@@ -115,6 +117,7 @@ class Game:
         self.camera.update()
 
     def events(self):
+        """ Handles key events """
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 pg.quit()

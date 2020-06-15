@@ -182,11 +182,13 @@ class Creator(metaclass=CreatorMeta):
         self.build_map(level_map)
 
     def build_map(self, level_map):
+        """ Reads map in txt format """
         for row, objs in enumerate(level_map):
             for col, obj in enumerate(objs):
                 self.create_object(row, col, obj)
 
     def create_object(self, row, col, obj):
+        """ Creates tiles, enemies and coins, also text for tutorial level """
         if obj == '1':
             self.create_wall(col * TILE_SIZE, row * TILE_SIZE, 1)
         elif obj == 'm':

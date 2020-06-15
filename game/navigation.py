@@ -53,6 +53,7 @@ class Navigator(metaclass=NavigatorMeta):
         self.wait_for_key(lambda: self.game.stop())
 
     def go_to_store(self):
+        """ Store loop - waits for Enter to go to the next level """
         self.game.screen.fill(RED)
         self.game.draw_stats_bar()
         self.drawer.draw_text('Store', 48, WHITE, WIDTH / 2, HEIGHT / 4)

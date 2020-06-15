@@ -18,6 +18,7 @@ class Camera:
             rect.midtop = (rect.midtop[0] + shift_x, rect.midtop[1])
 
     def update(self):
+        """ Every object is shifted according to current position of the player """
         if self.player.rect.right >= 500:
             diff = self.player.rect.right - 500  # shift the world left
             self.player.rect.right = 500
