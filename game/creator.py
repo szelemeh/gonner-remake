@@ -7,7 +7,7 @@ from typing import Optional
 import pygame as pg
 from PIL import Image
 
-from drawer import Drawer
+from game.drawer import Drawer
 from game.settings import *
 from sprites.enemies.air_enemies.ghost import Ghost
 from sprites.enemies.enemy import EnemyType

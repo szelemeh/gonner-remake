@@ -2,8 +2,8 @@ import sys
 
 import pygame as pg
 
-from creator import Creator
-from drawer import Drawer
+from game.creator import Creator
+from game.drawer import Drawer
 from game.camera import Camera
 from game.navigation import Navigator
 from game.settings import *
