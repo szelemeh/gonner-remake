@@ -34,6 +34,7 @@ class Game:
                              self.creator.texts)
 
         self.is_tutorial = False
+        self.current_level = 0
 
     def init_sprite_lists(self):
         self.all_sprites = self.creator.all_sprites
@@ -153,6 +154,7 @@ class Game:
 
         self.all_sprites.update()
 
+
         if abs((self.creator.right_wall.rect.x -
                 self.creator.right_wall.rect.width / 2) -
                (self.player.rect.x + self.player.rect.width / 2)) <= 25:
@@ -185,7 +187,7 @@ class Game:
             self.screen.blit(sf, rect.midtop)
 
     def reset(self):
-        self.player.hp = 10
+        self.player.hp = 15
         self.player.money = 0
         self.running = True
         self.playing = True

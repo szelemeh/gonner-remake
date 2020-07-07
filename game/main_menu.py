@@ -35,6 +35,7 @@ class MainMenu:
             for event in pg.event.get():
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_1:
+                        self.game.is_tutorial = False
                         waiting = False
                         self.play()
                     elif event.key == pg.K_2:
