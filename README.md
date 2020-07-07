@@ -4,5 +4,5 @@ Project for Python course
 
 <img src="example.png">
 
-## Requeirements
+## Requirements
 Python3, pygame
